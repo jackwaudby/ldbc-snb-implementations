@@ -5,3 +5,4 @@ validation/
 resources/old/
 resources/conf/
 *.iml
+src/test/
