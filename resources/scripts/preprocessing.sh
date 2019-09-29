@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 
-# This script merges person_email_emailaddress_0_0.csv and person_speaks_language_0_0.csv in person_0.0.csv
+# This script merges person_email_emailaddress_0_0.csv and person_speaks_language_0_0.csv into person_0.0.csv
 # All properties for Person vertices will exist in the same file
+# Split files in vertices and edges folders
 # This makes loading the data into JanusGraph easier
 
-
-#PATH_TO_DATA="/Users/jackwaudby/Documents/ldbc/ldbc_snb_datagen/test_data/social_network"
-PATH_TO_DATA="/Users/jackwaudby/Documents/ldbc/ldbc_snb_interactive_validation/neo4j/neo4j--validation_set/social_network/string_date"
+PATH_TO_DATA="${LDBC_SNB_DATAGEN_HOME}/social_network"
 
 merge_file () {
 
@@ -40,6 +39,7 @@ merge_file ${PATH_TO_DATA}/person_speaks_language_0_0.csv
 rm ${PATH_TO_DATA}/person_email_emailaddress_0_0.csv
 rm ${PATH_TO_DATA}/person_speaks_language_0_0.csv
 
-# TODO: Split into vertices and edges folders
+
+
 
 

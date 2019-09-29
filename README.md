@@ -1,2 +1,2 @@
 # LDBC SNB Implementation for JanusGraph
-Work in progress...
+
