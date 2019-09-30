@@ -9,13 +9,8 @@ import com.ldbc.driver.ResultReporter;
 import com.ldbc.driver.workloads.ldbc.snb.interactive.LdbcShortQuery1PersonProfile;
 import com.ldbc.driver.workloads.ldbc.snb.interactive.LdbcShortQuery1PersonProfileResult;
 
-import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
 
 /**
  * Given a start Person, retrieve their first name, last name, birthday, IP
@@ -52,7 +47,7 @@ public class LdbcShortQuery1PersonProfileHandler implements OperationHandler<Ldb
                     ParseDateLong.creationDateStringToLong(resultMap.get("creationDate")));
             // pass result to driver
             resultReporter.report(0, endResult, operation);
-        } catch (IOException | ParseException e) {
+        } catch (ParseException e) {
             e.printStackTrace();
         }
     }

@@ -5,6 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+/**
+ * This script converts Date strings to long
+ */
 public class ParseDateLong {
 
     public static long birthdayStringToLong(String birthday) throws ParseException {

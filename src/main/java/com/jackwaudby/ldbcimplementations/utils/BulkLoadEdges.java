@@ -17,6 +17,9 @@ import static com.jackwaudby.ldbcimplementations.utils.ExtractLabels.extractLabe
 import static com.jackwaudby.ldbcimplementations.utils.LineCount.lineCount;
 import static com.jackwaudby.ldbcimplementations.utils.TagClassFix.tagClassFix;
 
+/**
+ * This script provides a method for loading edges.
+ */
 public class BulkLoadEdges {
 
     public static void bulkLoadEdges(String pathToData, JanusGraph graph, GraphTraversalSource g) {
@@ -56,7 +59,7 @@ public class BulkLoadEdges {
                     String edgeLabel = cleanFileName[1]; // edge label
                     edgeTail = tagClassFix(edgeTail); // check for tag class fix
                     edgeHead = tagClassFix(edgeHead); // check for tag class fix
-                    GraphLoader.LOGGER.info("Adding Edge: " + "(" + edgeTail + ")-[" + edgeLabel + "]->(" + edgeHead + ")");
+                    GraphLoader.LOGGER.info("Adding Edge: " + "(" + edgeTail + ")-[:" + edgeLabel + "]->(" + edgeHead + ")");
                     int elementsToAdd = lineCount(file); // elements to add
                     Reader in; // read file in
                     try {
@@ -72,7 +75,7 @@ public class BulkLoadEdges {
                             int elementsAdded = 0;
                             for (CSVRecord record : records) {
                                 elementsAdded = elementsAdded + 1; // increment elements added
-                                System.out.print("Progress: " + elementsAdded + "/" + elementsToAdd + "\r");
+                                //System.out.print("Progress: " + elementsAdded + "/" + elementsToAdd + "\r");
                                 g.V().has(edgeHead, "id", Long.parseLong(record.get(1))).as("a").V().has(edgeTail, "id", Long.parseLong(record.get(0))).addE(edgeLabel).to("a").next(); // add edge
                             }
                             graph.tx().commit(); // commit edges

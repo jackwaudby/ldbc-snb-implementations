@@ -3,9 +3,12 @@ package com.jackwaudby.ldbcimplementations.utils;
 import org.apache.log4j.Logger;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 
+/**
+ * This script provides basic graph statistics.
+ */
 public class GraphStats {
 
-    static final Logger LOGGER = Logger.getLogger(GraphStats.class);
+    private static final Logger LOGGER = Logger.getLogger(GraphStats.class);
 
     public static void elementCount(GraphTraversalSource g){
 

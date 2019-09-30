@@ -17,7 +17,9 @@ import static com.jackwaudby.ldbcimplementations.utils.ExtractLabels.extractLabe
 import static com.jackwaudby.ldbcimplementations.utils.LineCount.lineCount;
 import static com.jackwaudby.ldbcimplementations.utils.TagClassFix.tagClassFix;
 
-
+/**
+ * This script provides a method for loading vertices.
+ */
 public class BulkLoadVertices {
 
     public static void bulkLoadVertices(String pathToData, JanusGraph graph, GraphTraversalSource g) {
@@ -83,7 +85,7 @@ public class BulkLoadVertices {
                                             Long.parseLong(record.get(0))).next(); // add vertex to graph
 
                                     elementsAdded = elementsAdded + 1; // increment elements added
-                                    System.out.print("Progress: " + elementsAdded + "/" + elementsToAdd + "\r");
+                                    //System.out.print("Progress: " + elementsAdded + "/" + elementsToAdd + "\r");
                                     for (int i = 1; i < header.size(); i++) { // add properties to vertex
                                         if (integerProperties.contains(header.get(i))) { // Integer
                                             g.V(v).property(header.get(i), Integer.parseInt(record.get(i))).next();

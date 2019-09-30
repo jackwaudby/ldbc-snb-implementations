@@ -5,6 +5,9 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSo
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphFactory;
 
+/**
+ * This script drops a graph.
+ */
 public class DeleteGraph {
 
     private static Logger LOGGER = Logger.getLogger(DeleteGraph.class);

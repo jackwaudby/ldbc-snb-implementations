@@ -1,5 +1,8 @@
 package com.jackwaudby.ldbcimplementations.utils;
 
+/**
+ * This script provides a method for extracting labels from filenames.
+ */
 class ExtractLabels {
 
     // extracts labels from file names
