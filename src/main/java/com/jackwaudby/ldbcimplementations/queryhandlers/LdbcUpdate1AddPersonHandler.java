@@ -14,6 +14,7 @@ import static com.jackwaudby.ldbcimplementations.utils.HttpResponseToResultMap.h
 
 public class LdbcUpdate1AddPersonHandler implements OperationHandler<LdbcUpdate1AddPerson,JanusGraphDb.JanusGraphConnectionState> {
 
+
     @Override
     public void executeOperation(LdbcUpdate1AddPerson operation, JanusGraphDb.JanusGraphConnectionState dbConnectionState, ResultReporter resultReporter) throws DbException {
 
@@ -30,7 +31,11 @@ public class LdbcUpdate1AddPersonHandler implements OperationHandler<LdbcUpdate1
         String lang = languages.toString().replaceAll(", ","', '").replaceAll( "\\[","\\['").replaceAll( "]","']");
         List<String> email = operation.emails();
         String em = email.toString().replaceAll(", ","', '").replaceAll( "\\[","\\['").replaceAll( "]","']");
-//        List<Long> tagIds = operation.tagIds();
+
+        // TODO: Add to query
+        List<Long> tagIds = operation.tagIds();
+        List<LdbcUpdate1AddPerson.Organization> workAt = operation.workAt();
+        List<LdbcUpdate1AddPerson.Organization> studyAt = operation.studyAt();
 
         // get JanusGraph client
         JanusGraphDb.JanusGraphClient client = dbConnectionState.getClient();
