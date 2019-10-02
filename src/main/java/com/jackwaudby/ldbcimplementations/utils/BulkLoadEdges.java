@@ -31,7 +31,7 @@ public class BulkLoadEdges {
         integerProperties.add("workForm");
         List<String> dateTimeProperties = new ArrayList<>();
         dateTimeProperties.add("joinDate");
-//        dateTimeProperties.add("creationDate");
+        dateTimeProperties.add("creationDate");
         List<String> setProperties = new ArrayList<>();
         setProperties.add("language");
         setProperties.add("email");

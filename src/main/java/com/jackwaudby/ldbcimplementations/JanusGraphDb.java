@@ -1,11 +1,13 @@
 package com.jackwaudby.ldbcimplementations;
 
 import com.jackwaudby.ldbcimplementations.queryhandlers.LdbcShortQuery1PersonProfileHandler;
-import com.jackwaudby.ldbcimplementations.queryhandlers.LdbcShortQuery4MessageContentHandler;
+//import com.jackwaudby.ldbcimplementations.queryhandlers.LdbcShortQuery4MessageContentHandler;
+import com.jackwaudby.ldbcimplementations.queryhandlers.LdbcUpdate1AddPersonHandler;
 import com.ldbc.driver.*;
 import com.ldbc.driver.control.LoggingService;
 import com.ldbc.driver.workloads.ldbc.snb.interactive.LdbcShortQuery1PersonProfile;
 import com.ldbc.driver.workloads.ldbc.snb.interactive.LdbcShortQuery4MessageContent;
+import com.ldbc.driver.workloads.ldbc.snb.interactive.LdbcUpdate1AddPerson;
 import org.apache.http.HttpClientConnection;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -71,8 +73,8 @@ public class JanusGraphDb extends Db {
         }
 
         /**
-         * Provides functionality to execute a query against JanusGraph
-         * @return query result
+         * Executes a Gremlin query against JanusGraph
+         * @return HTTP response message
          */
         public String execute(String queryString)  {
 
@@ -81,13 +83,10 @@ public class JanusGraphDb extends Db {
                 StringEntity params = new StringEntity(queryString);                    // create entity for request message
                 HttpPost request = new HttpPost(URI.create("http://localhost:8182"));   // create http post request
                 request.setEntity(params);                                              // add content entity to request
-                CloseableHttpResponse response = httpClient.execute(request, context);   // execute request and get response
-                HttpEntity message = response.getEntity();                          // get message
-                String output = EntityUtils.toString(message);                      // convert to string
-                JSONObject jo = new JSONObject(output);                             // convert to JSON
-                result = jo.getJSONObject("result").getJSONObject("data").getJSONArray("@value").getString(0);
-//                result = output;
-                response.close();                                                   // close stream
+                CloseableHttpResponse response = httpClient.execute(request, context);  // execute request and get response
+                HttpEntity message = response.getEntity();                              // get message
+                result = EntityUtils.toString(message);                                 // convert to string
+                response.close();                                                       // close stream
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -164,7 +163,8 @@ public class JanusGraphDb extends Db {
 
         // TODO: register operation handlers
         registerOperationHandler(LdbcShortQuery1PersonProfile.class, LdbcShortQuery1PersonProfileHandler.class);
-        registerOperationHandler(LdbcShortQuery4MessageContent.class, LdbcShortQuery4MessageContentHandler.class);
+//        registerOperationHandler(LdbcShortQuery4MessageContent.class, LdbcShortQuery4MessageContentHandler.class);
+        registerOperationHandler(LdbcUpdate1AddPerson.class, LdbcUpdate1AddPersonHandler.class);
     }
 
 

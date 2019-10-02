@@ -1,24 +1,21 @@
 package com.jackwaudby.ldbcimplementations.queryhandlers;
 
 import com.jackwaudby.ldbcimplementations.JanusGraphDb;
-import com.jackwaudby.ldbcimplementations.utils.ParseDateLong;
-import com.jackwaudby.ldbcimplementations.utils.ParseResultMap;
 import com.ldbc.driver.DbException;
 import com.ldbc.driver.OperationHandler;
 import com.ldbc.driver.ResultReporter;
 import com.ldbc.driver.workloads.ldbc.snb.interactive.LdbcShortQuery1PersonProfile;
 import com.ldbc.driver.workloads.ldbc.snb.interactive.LdbcShortQuery1PersonProfileResult;
 
-import java.text.ParseException;
 import java.util.HashMap;
+
+import static com.jackwaudby.ldbcimplementations.utils.HttpResponseToResultMap.httpResponseToResultMap;
 
 /**
  * Given a start Person, retrieve their first name, last name, birthday, IP
  * address, browser, and city of residence.
  */
 public class LdbcShortQuery1PersonProfileHandler implements OperationHandler<LdbcShortQuery1PersonProfile, JanusGraphDb.JanusGraphConnectionState> {
-
-    //TODO: Add transaction and retry logic
 
     @Override
     public void executeOperation(LdbcShortQuery1PersonProfile operation, JanusGraphDb.JanusGraphConnectionState dbConnectionState, ResultReporter resultReporter) throws DbException {
@@ -28,27 +25,51 @@ public class LdbcShortQuery1PersonProfileHandler implements OperationHandler<Ldb
         // get JanusGraph client
         JanusGraphDb.JanusGraphClient client = dbConnectionState.getClient();
         // gremlin query string
-        String queryString = "{\"gremlin\": \"def v = g.V().has('Person','id'," + personId + ").next();[];def hm = g.V(v).valueMap('firstName','lastName','birthday','locationIP','browserUsed','gender','creationDate').next();[];def v2 = g.V(v).outE('isLocatedIn').inV().valueMap('id').next();[]; def cityId = v2['id'];[];hm.put('cityId',cityId);[];hm.toString()\"}";
+        String queryString = "{\"gremlin\": \"" +
+                "try {" +
+                "v = g.V().has('Person','id'," + personId + ").next();[];" +
+                "hm = g.V(v).valueMap('firstName','lastName','birthday','locationIP','browserUsed','gender','creationDate').next();[];" +
+                "v2 = g.V(v).outE('isLocatedIn').inV().valueMap('id').next();[];" +
+                "cityId = v2['id'];[];" +
+                "hm.put('cityId',cityId);[];" +
+                "graph.tx().commit();[];" +
+                "} catch (Exception e) {" +
+                "errorMessage =[e.toString()];[];" +
+                "hm=[query_error:errorMessage];[];" +
+                "graph.tx().rollback();[];" +
+                "};" +
+                "hm;\"" +
+                "}";
 
-        try {
-            // execute query TODO: handle error case
-            String result = client.execute(queryString);
-            // convert result string into map
-            HashMap<String, String> resultMap = ParseResultMap.resultToMap(result);
-            // create result for driver
-            LdbcShortQuery1PersonProfileResult endResult = new LdbcShortQuery1PersonProfileResult(
-                    resultMap.get("firstName"),
-                    resultMap.get("lastName"),
-                    ParseDateLong.birthdayStringToLong(resultMap.get("birthday")),
-                    resultMap.get("locationIP"),
-                    resultMap.get("browserUsed"),
-                    Long.parseLong(resultMap.get("cityId")),
-                    resultMap.get("gender"),
-                    ParseDateLong.creationDateStringToLong(resultMap.get("creationDate")));
-            // pass result to driver
-            resultReporter.report(0, endResult, operation);
-        } catch (ParseException e) {
-            e.printStackTrace();
+
+        int TX_ATTEMPTS = 0;
+        int TX_RETRIES = 5;
+        LdbcShortQuery1PersonProfileResult endResult = null;
+        while (TX_ATTEMPTS < TX_RETRIES) {
+            System.out.println("Attempt " + (TX_ATTEMPTS + 1));
+            String response = client.execute(queryString);                                // get response as string
+            HashMap<String, String> result = httpResponseToResultMap(response);      // convert to result map
+            if (result.containsKey("query_error")) {
+                TX_ATTEMPTS = TX_ATTEMPTS + 1;
+                System.out.println("Query Error: " + result.get("query_error"));
+            } else if (result.containsKey("http_error")) {
+                TX_ATTEMPTS = TX_ATTEMPTS + 1;
+                System.out.println("Gremlin Server Error: " + result.get("http_error"));
+            } else {
+                // create result object
+                endResult = new LdbcShortQuery1PersonProfileResult(
+                        result.get("firstName"),
+                        result.get("lastName"),
+                        Long.parseLong(result.get("birthday")),
+                        result.get("locationIP"),
+                        result.get("browserUsed"),
+                        Long.parseLong(result.get("cityId")),
+                        result.get("gender"),
+                        Long.parseLong(result.get("creationDate")));
+
+                break;
+            }
         }
+        resultReporter.report(0, endResult, operation);
     }
 }

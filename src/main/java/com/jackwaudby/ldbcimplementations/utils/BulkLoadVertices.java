@@ -11,6 +11,7 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 
 
 import static com.jackwaudby.ldbcimplementations.utils.ExtractLabels.extractLabels;
@@ -33,7 +34,7 @@ public class BulkLoadVertices {
         // properties that are DateTime type
         List<String> dateTimeProperties = new ArrayList<>();
         dateTimeProperties.add("joinDate");
-//        dateTimeProperties.add("creationDate");
+        dateTimeProperties.add("creationDate");
 
         // properties that are Set type
         List<String> setProperties = new ArrayList<>();
@@ -89,8 +90,9 @@ public class BulkLoadVertices {
                                     for (int i = 1; i < header.size(); i++) { // add properties to vertex
                                         if (integerProperties.contains(header.get(i))) { // Integer
                                             g.V(v).property(header.get(i), Integer.parseInt(record.get(i))).next();
-                                        } else if (header.get(i).contentEquals("birthday1")) { // Date
+                                        } else if (header.get(i).contentEquals("birthday")) { // Date
                                             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                            dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
                                             g.V(v).property(header.get(i), dateFormat.parse(record.get(i))).next();
                                         } else if (dateTimeProperties.contains(header.get(i))) { // DateTime
                                             SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
