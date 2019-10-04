@@ -25,42 +25,40 @@ public class BulkLoadVertices {
 
     public static void bulkLoadVertices(String pathToData, JanusGraph graph, GraphTraversalSource g) {
 
-        // properties that are Integer type
-        List<String> integerProperties = new ArrayList<>();
+
+        List<String> integerProperties = new ArrayList<>();                     // properties that are Integer type
         integerProperties.add("length");
         integerProperties.add("classYear");
         integerProperties.add("workForm");
-
-        // properties that are DateTime type
-        List<String> dateTimeProperties = new ArrayList<>();
+        List<String> dateTimeProperties = new ArrayList<>();                    // properties that are DateTime type
         dateTimeProperties.add("joinDate");
         dateTimeProperties.add("creationDate");
-
-        // properties that are Set type
-        List<String> setProperties = new ArrayList<>();
-        setProperties.add("language");
+        List<String> setProperties = new ArrayList<>();                         // properties that are Set type
+        setProperties.add("speaks");
         setProperties.add("email");
 
-        String validVertexFiles = "comment_0_0.csv,forum_0_0.csv,person_0_0.csv,organisation_0_0.csv,place_0_0.csv,post_0_0.csv,tag_0_0.csv,tagclass_0_0.csv"; // vertex files
+        String validVertexFiles = "comment_0_0.csv,forum_0_0.csv," +
+                "person_0_0.csv,organisation_0_0.csv,place_0_0.csv," +
+                "post_0_0.csv,tag_0_0.csv,tagclass_0_0.csv";                    // vertex files
         String[] vertexFileNames = validVertexFiles.split(",");
-        List<String> vertexFilePaths = new ArrayList<>(); // valid vertex file paths
+        List<String> vertexFilePaths = new ArrayList<>();                       // valid vertex file paths
         for (int i =0; i<vertexFileNames.length;i++){
             vertexFilePaths.add(i,pathToData + vertexFileNames[i]);
         }
 
-        File dataDirectory = new File(pathToData); // create directory
-        File[] filesInDataDirectory = dataDirectory.listFiles(); // create array of files
-        if (filesInDataDirectory != null) { // check directory is not empty
-            for (File child : filesInDataDirectory) { // for each file in the directory
-                if (!(child.toString().contains(".crc") || // ignore .crc files
-                        child.toString().contains("update") || // ignore update files
-                        child.toString().contains(".DS_Store")) &&  // ignore DS
-                        (vertexFilePaths.contains(child.toString()))) { // valid vertex path
+        File dataDirectory = new File(pathToData);                              // create directory
+        File[] filesInDataDirectory = dataDirectory.listFiles();                // create array of files
+        if (filesInDataDirectory != null) {                                     // check directory is not empty
+            for (File child : filesInDataDirectory) {                           // for each file in the directory
+                if (!(child.toString().contains(".crc") ||                      // ignore .crc files
+                        child.toString().contains("update") ||                  // ignore update files
+                        child.toString().contains(".DS_Store")) &&              // ignore DS
+                        (vertexFilePaths.contains(child.toString()))) {         // valid vertex path
 
-                    String[] cleanFileName = extractLabels(child.toString(), pathToData); // clean file name
-                    String vertexLabel = cleanFileName[0]; // capitalise vertex label
+                    String[] cleanFileName = extractLabels(child.toString(), pathToData);   // clean file name
+                    String vertexLabel = cleanFileName[0];                                  // capitalise vertex label
                     vertexLabel = vertexLabel.substring(0, 1).toUpperCase() + vertexLabel.substring(1);
-                    vertexLabel = tagClassFix(vertexLabel); // tag class fix
+                    vertexLabel = tagClassFix(vertexLabel);                                 // tag class fix
 
                     GraphLoader.LOGGER.info("Adding Vertex: (" + vertexLabel + ")");
 

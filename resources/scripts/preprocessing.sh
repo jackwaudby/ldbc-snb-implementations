@@ -13,7 +13,7 @@ if [ "$1" = "${PATH_TO_DATA}/person_email_emailaddress_0_0.csv" ]; then
     header='1s;^;id|email\n;'
     echo "Merging email addresses"
 elif [ "$1" = "${PATH_TO_DATA}/person_speaks_language_0_0.csv" ]; then
-    header='1s;^;id|language\n;'
+    header='1s;^;id|speaks\n;'
     echo "Merging languages"
 else
     echo "Error!"

@@ -1,13 +1,10 @@
 package com.jackwaudby.ldbcimplementations;
 
-import com.jackwaudby.ldbcimplementations.queryhandlers.LdbcShortQuery1PersonProfileHandler;
+import com.jackwaudby.ldbcimplementations.queryhandlers.*;
 //import com.jackwaudby.ldbcimplementations.queryhandlers.LdbcShortQuery4MessageContentHandler;
-import com.jackwaudby.ldbcimplementations.queryhandlers.LdbcUpdate1AddPersonHandler;
 import com.ldbc.driver.*;
 import com.ldbc.driver.control.LoggingService;
-import com.ldbc.driver.workloads.ldbc.snb.interactive.LdbcShortQuery1PersonProfile;
-import com.ldbc.driver.workloads.ldbc.snb.interactive.LdbcShortQuery4MessageContent;
-import com.ldbc.driver.workloads.ldbc.snb.interactive.LdbcUpdate1AddPerson;
+import com.ldbc.driver.workloads.ldbc.snb.interactive.*;
 import org.apache.http.HttpClientConnection;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -163,8 +160,12 @@ public class JanusGraphDb extends Db {
 
         // TODO: register operation handlers
         registerOperationHandler(LdbcShortQuery1PersonProfile.class, LdbcShortQuery1PersonProfileHandler.class);
-//        registerOperationHandler(LdbcShortQuery4MessageContent.class, LdbcShortQuery4MessageContentHandler.class);
+        registerOperationHandler(LdbcShortQuery4MessageContent.class, LdbcShortQuery4MessageContentHandler.class);
+        registerOperationHandler(LdbcUpdate6AddPost.class,LdbcUpdate6AddPostHandler.class);
         registerOperationHandler(LdbcUpdate1AddPerson.class, LdbcUpdate1AddPersonHandler.class);
+        registerOperationHandler(LdbcUpdate2AddPostLike.class, LdbcUpdate2AddPostLikeHandler.class);
+        registerOperationHandler(LdbcUpdate5AddForumMembership.class, LdbcUpdate5AddForumMembershipHandler.class);
+        registerOperationHandler(LdbcUpdate8AddFriendship.class, LdbcUpdate8AddFriendshipHandler.class);
     }
 
 

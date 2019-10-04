@@ -6,7 +6,9 @@ import com.ldbc.driver.OperationHandler;
 import com.ldbc.driver.ResultReporter;
 import com.ldbc.driver.workloads.ldbc.snb.interactive.LdbcNoResult;
 import com.ldbc.driver.workloads.ldbc.snb.interactive.LdbcUpdate1AddPerson;
+import com.ldbc.driver.workloads.ldbc.snb.interactive.LdbcUpdate2AddPostLike;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,10 +34,22 @@ public class LdbcUpdate1AddPersonHandler implements OperationHandler<LdbcUpdate1
         List<String> email = operation.emails();
         String em = email.toString().replaceAll(", ","', '").replaceAll( "\\[","\\['").replaceAll( "]","']");
 
-        // TODO: Add to query
         List<Long> tagIds = operation.tagIds();
         List<LdbcUpdate1AddPerson.Organization> workAt = operation.workAt();
+        List<Long> companyIds = new ArrayList<>();
+        List<Integer> workFrom = new ArrayList<>();
+        for (int i = 0; i < workAt.size(); i++) {
+            companyIds.add(i,workAt.get(i).organizationId());
+            workFrom.add(i,workAt.get(i).year());
+        }
+
         List<LdbcUpdate1AddPerson.Organization> studyAt = operation.studyAt();
+        List<Long> uniIds = new ArrayList<>();
+        List<Integer> classYear = new ArrayList<>();
+        for (int i = 0; i < studyAt.size(); i++) {
+            uniIds.add(i,studyAt.get(i).organizationId());
+            classYear.add(i,studyAt.get(i).year());
+        }
 
         // get JanusGraph client
         JanusGraphDb.JanusGraphClient client = dbConnectionState.getClient();
@@ -53,16 +67,36 @@ public class LdbcUpdate1AddPersonHandler implements OperationHandler<LdbcUpdate1
                 "g.V().has('Place', 'id',"+ cityId +").as('city').V(p).addE('isLocatedIn').to('city').next();[];" +
                 "languages="+lang+";[];"+
                 "for (item in languages) { " +
-                " g.V(p).property(set, 'language', item).next();[];" +
+                " g.V(p).property(set, 'speaks', item).next();[];" +
                 "}; "+
                 "email="+em+";[];"+
                 "for (item in email) { " +
                 "g.V(p).property(set, 'email', item).next();[];" +
                 "}; "+
-//                "tagid=[139, 205, 286, 470, 538];[];"+
-//                "for (item in tagid) { " +
-//                "g.V().has('Tag', 'id', item).as('tag').V(p).addE('hasInterest').to('tag').next();[];" +
-//                "}; "+
+                "tagid=" +
+                tagIds.toString() +
+                ";[];"+
+                "for (item in tagid) { " +
+                "g.V().has('Tag', 'id', item).as('tag').V(p).addE('hasInterest').to('tag').next();[];" +
+                "};" +
+                "companyId=" +
+                companyIds.toString() +
+                ";[];" +
+                "workFrom=" +
+                workFrom.toString() +
+                ";[];" +
+                "for (i = 0; i < companyId.size();i++){" +
+                "g.V().has('Organisation', 'id', companyId[i]).as('comp').V(p).addE('workAt').property('workFrom',workFrom[i]).to('comp').next();[];" +
+                "};" +
+                "uniId=" +
+                uniIds.toString() +
+                ";[];" +
+                "classYear=" +
+                classYear.toString() +
+                ";[];" +
+                "for (i = 0; i < uniId.size();i++){" +
+                "g.V().has('Organisation', 'id', uniId[i]).as('uni').V(p).addE('studyAt').property('classYear',classYear[i]).to('uni').next();[];" +
+                "};" +
                 "graph.tx().commit();[];" +
                 "queryOutcome=['success'];[];" +
                 "hm=[query_outcome:queryOutcome];[];" +

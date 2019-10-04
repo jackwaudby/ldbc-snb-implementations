@@ -50,7 +50,6 @@ public class LoadSchemaIndexes {
             mgmt.makeEdgeLabel("hasType").multiplicity(Multiplicity.SIMPLE).make();
 
             // define vertex property keys
-            // TODO: Add properties to edges upon load
             mgmt.makePropertyKey("id").dataType(Long.class).cardinality(Cardinality.SINGLE).make();         // Forum, Post/Comment (Message), Company/University (Organisation), Person, City/Country/Continent (Place), Tag, TagClass
             mgmt.makePropertyKey("title").dataType(String.class).cardinality(Cardinality.SINGLE).make();        // Forum
             mgmt.makePropertyKey("creationDate").dataType(Date.class).cardinality(Cardinality.SINGLE).make();   // Forum, Post/Comment (Message), Person, :knows, :likes
@@ -65,7 +64,8 @@ public class LoadSchemaIndexes {
             mgmt.makePropertyKey("gender").dataType(String.class).cardinality(Cardinality.SINGLE).make();       // Person
             mgmt.makePropertyKey("birthday").dataType(Date.class).cardinality(Cardinality.SINGLE).make();       // Person
             mgmt.makePropertyKey("email").dataType(String.class).cardinality(Cardinality.SET).make();           // Person
-            mgmt.makePropertyKey("language").dataType(String.class).cardinality(Cardinality.SET).make();        // Person, Post (Message)
+            mgmt.makePropertyKey("speaks").dataType(String.class).cardinality(Cardinality.SET).make();        // Person, Post (Message)
+            mgmt.makePropertyKey("language").dataType(String.class).cardinality(Cardinality.SINGLE).make();        // Person, Post (Message)
             mgmt.makePropertyKey("imageFile").dataType(String.class).cardinality(Cardinality.SINGLE).make();    // Post (Message)
             mgmt.makePropertyKey("type").dataType(String.class).cardinality(Cardinality.SINGLE).make();         // Company/University (Organisation), City/Country/Continent (Place)
 
