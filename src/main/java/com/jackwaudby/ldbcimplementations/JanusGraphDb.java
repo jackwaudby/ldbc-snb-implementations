@@ -1,7 +1,6 @@
 package com.jackwaudby.ldbcimplementations;
 
 import com.jackwaudby.ldbcimplementations.queryhandlers.*;
-//import com.jackwaudby.ldbcimplementations.queryhandlers.LdbcShortQuery4MessageContentHandler;
 import com.ldbc.driver.*;
 import com.ldbc.driver.control.LoggingService;
 import com.ldbc.driver.workloads.ldbc.snb.interactive.*;
@@ -77,12 +76,12 @@ public class JanusGraphDb extends Db {
 
             String result = null;
             try {
-                StringEntity params = new StringEntity(queryString);                    // create entity for request message
+                StringEntity params = new StringEntity(queryString, "UTF-8");   // create entity for request message
                 HttpPost request = new HttpPost(URI.create("http://localhost:8182"));   // create http post request
                 request.setEntity(params);                                              // add content entity to request
                 CloseableHttpResponse response = httpClient.execute(request, context);  // execute request and get response
                 HttpEntity message = response.getEntity();                              // get message
-                result = EntityUtils.toString(message);                                 // convert to string
+                result = EntityUtils.toString(message,"utf-8");            // convert to string
                 response.close();                                                       // close stream
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -161,12 +160,12 @@ public class JanusGraphDb extends Db {
         // TODO: register operation handlers
         registerOperationHandler(LdbcShortQuery1PersonProfile.class, LdbcShortQuery1PersonProfileHandler.class);
         registerOperationHandler(LdbcShortQuery4MessageContent.class, LdbcShortQuery4MessageContentHandler.class);
-        registerOperationHandler(LdbcUpdate6AddPost.class,LdbcUpdate6AddPostHandler.class);
         registerOperationHandler(LdbcUpdate1AddPerson.class, LdbcUpdate1AddPersonHandler.class);
         registerOperationHandler(LdbcUpdate2AddPostLike.class, LdbcUpdate2AddPostLikeHandler.class);
         registerOperationHandler(LdbcUpdate5AddForumMembership.class, LdbcUpdate5AddForumMembershipHandler.class);
-        registerOperationHandler(LdbcUpdate8AddFriendship.class, LdbcUpdate8AddFriendshipHandler.class);
+        registerOperationHandler(LdbcUpdate6AddPost.class,LdbcUpdate6AddPostHandler.class);
         registerOperationHandler(LdbcUpdate7AddComment.class,LdbcUpdate7AddCommentHandler.class);
+        registerOperationHandler(LdbcUpdate8AddFriendship.class, LdbcUpdate8AddFriendshipHandler.class);
     }
 
 
