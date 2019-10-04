@@ -166,6 +166,7 @@ public class JanusGraphDb extends Db {
         registerOperationHandler(LdbcUpdate2AddPostLike.class, LdbcUpdate2AddPostLikeHandler.class);
         registerOperationHandler(LdbcUpdate5AddForumMembership.class, LdbcUpdate5AddForumMembershipHandler.class);
         registerOperationHandler(LdbcUpdate8AddFriendship.class, LdbcUpdate8AddFriendshipHandler.class);
+        registerOperationHandler(LdbcUpdate7AddComment.class,LdbcUpdate7AddCommentHandler.class);
     }
 
 
