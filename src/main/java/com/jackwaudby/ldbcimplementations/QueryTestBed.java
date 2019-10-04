@@ -1,6 +1,7 @@
 package com.jackwaudby.ldbcimplementations;
 
 import com.ldbc.driver.workloads.ldbc.snb.interactive.LdbcUpdate1AddPerson;
+import com.ldbc.driver.workloads.ldbc.snb.interactive.LdbcUpdate7AddComment;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,22 +21,86 @@ public class QueryTestBed {
     public static void main(String[] args)  {
 
         // parameters
-        long personId = 1099511630063L;
+        long commentId = 3;
+        long creationDate = 10000000;
+        String locationIp = "12.12.12.12";
+        String browserUsed = "Safari";
+        String content = "woo pies";
+        int length = 8;
+
+        long authorPersonId = 6597069766681L;
+        long countryId = 0;
+        long replyToPostId = 343597383680L;
+        long replyToCommentId = -1;
+
         List<Long> tagIds = new ArrayList<>();
         tagIds.add(30L);
         tagIds.add(60L);
         tagIds.add(80L);
 
+        // add vertex and associated edges template
+        String addVertex = "{\"gremlin\": \"" +
+                "try {" +
+                "p = g.addV('Comment').property('id'," +
+                commentId +
+                ").property('creationDate'," +
+                creationDate +
+                ").property('locationIP','" +
+                locationIp +
+                "')" +
+                ".property('browserUsed','" +
+                browserUsed +
+                "').property('content','" +
+                content +
+                "')" +
+                ".property('length'," +
+                length +
+                ").next();[];" +
+                "g.V().has('Person', 'id'," +
+                authorPersonId +
+                ").as('creator').V(p).addE('hasCreator').to('creator').next();[];" +
+                "g.V().has('Place', 'id'," +
+                countryId +
+                ").as('location').V(p).addE('isLocatedIn').to('location').next();[];" +
+                "tagid=" +
+                tagIds.toString() +
+                ";[];"+
+                "for (item in tagid) { " +
+                "g.V().has('Tag', 'id', item).as('tag').V(p).addE('hasTag').to('tag').next();[];" +
+                "};" +
+                "if (" + replyToPostId + "==-1){" +
+                "g.V().has('Comment', 'id'," + replyToCommentId + ").as('comment').V(p).addE('replyOf').to('comment').next();[];" +
+                "} else {" +
+                "g.V().has('Post', 'id'," + replyToPostId + ").as('post').V(p).addE('replyOf').to('post').next();[];" +
+                "};" +
+                "graph.tx().commit();[];" +
+                "queryOutcome=['success'];[];" +
+                "hm=[query_outcome:queryOutcome];[];" +
+                "} catch (Exception e) {" +
+                "errorMessage =[e.toString()];[];" +
+                "hm=[query_error:errorMessage];[];" +
+                "graph.tx().rollback();[];" +
+                "};" +
+                "hm;\"" +
+                "}";
+
+
         // read vertex properties template
         String readVertex = "{\"gremlin\": \"" +
                 "try { " +
-                "v = g.V().has('Person','id'," +
-                personId +
+                "v = g.V().has('Comment','id'," +
+                commentId +
                 ").next();[];" +
-                "result = g.V(v).valueMap('id','firstName','lastName','birthday','locationIP','browserUsed','gender','creationDate','language','email').next();[];" +
-                "v2 = g.V(v).outE('isLocatedIn').inV().valueMap('id').next();[];" +
-                "cityId = v2['id'];[];" +
-                "result.put('cityId',cityId);[];" +
+                "result = g.V(v).valueMap('id','imageFile','creationDate','locationIP','browserUsed','language','content','length').next();[];" +
+//                "v2 = g.V(v).outE('hasCreator').inV().valueMap('id').next();[];" +
+//                "authorId = v2['id'];[];" +
+//                "result.put('authorId',authorId);[];" +
+//                "v3 = g.V(v).outE('isLocatedIn').inV().valueMap('id').next();[];" +
+//                "locationId = v3['id'];[];" +
+//                "result.put('locationId',locationId);[];" +
+//                "v4 = g.V(v).outE('replyOf').inV().valueMap('id').next();[];" +
+//                "replyToId = v4['id'];[];" +
+//                "result.put('replyToId',replyToId);[];" +
                 "graph.tx().commit();[];" +
                 "result;" +
                 "} catch (Exception e) {" +
@@ -46,45 +111,10 @@ public class QueryTestBed {
                 "result;\"" +
                 "}";
 
-
-        // add vertex and associated edges template
-        String addVertex = "{\"gremlin\": \"" +
-                "try {" +
-                "p = g.addV('Person').property('id'," +
-                personId +
-                ").property('firstName','John').property('lastName','Doe')" +
-                ".property('gender','female').property('birthday',789999).property('creationDate',789999)" +
-                ".property('locationIP','56,89.567.445').property('browserUsed','Safari').next();[];" +
-                "g.V().has('Place', 'id', 526).as('city').V(p).addE('isLocatedIn').to('city').next();[];" +
-                "languages=['en','de'];[];"+
-                "for (item in languages) { " +
-                " g.V(p).property(set, 'language', item).next();[];" +
-                "}; "+
-                "email=['jack726@hotmail.com','jack726@icloud.com'];[];"+
-                "for (item in email) { " +
-                " g.V(p).property(set, 'email', item).next();[];" +
-                "}; "+
-                "tagid=" +
-                tagIds.toString() +
-                ";[];"+
-                "for (item in tagid) { " +
-                "g.V().has('Tag', 'id', item).as('tag').V(p).addE('hasInterest').to('tag').next();[];" +
-                "};" +
-                "graph.tx().commit();[];" +
-                "queryOutcome=['success'];[];" +
-                "hm=[query_outcome:queryOutcome];[];" +
-                "} catch (Exception e) {" +
-                "errorMessage =[e.toString()];[];" +
-                "hm=[query_error:errorMessage];[];" +
-                "graph.tx().rollback();[];" +
-                "};" +
-                "hm;\"" +
-                "}";
-
         // delete vertex template
         String deleteVertex  = "{\"gremlin\": \"" +
                 "try {" +
-                "g.V().has('Person','id'," + personId + ").drop()" +
+                "g.V().has('Comment','id'," + commentId + ").drop();[];" +
                 "graph.tx().commit();[];" +
                 "queryOutcome=['success'];[];" +
                 "hm=[query_outcome:queryOutcome];[];" +
@@ -96,11 +126,19 @@ public class QueryTestBed {
                 "hm;\"" +
                 "}";
 
-        // read edge template
-        String readEdge = "{\"gremlin\": \"" +
-                "g.V().has('Person','id'," +
-                personId +
-                ").outE('knows').count()" +
+        String deleteVertex2  = "{\"gremlin\": \"" +
+                "g.V().has('Comment','id'," + commentId + ").drop()" +
+                "\"" +
+                "}";
+
+        // vertex count
+        String vertexCount = "{\"gremlin\": \"" +
+                "g.V().hasLabel('Comment').count()" +
+                "\"" +
+                "}";
+        // edge count
+        String edgeCount = "{\"gremlin\": \"" +
+                "g.E().count()" +
                 "\"" +
                 "}";
 
@@ -108,12 +146,13 @@ public class QueryTestBed {
         hm.put("url","http://localhost:8182");
         JanusGraphDb x = new JanusGraphDb();
         x.init(hm);
-
+        // 67
+        // 31849
         int TX_ATTEMPTS = 0;
         int TX_RETRIES = 5;
         while (TX_ATTEMPTS < TX_RETRIES) {
             System.out.println("Attempt " + (TX_ATTEMPTS + 1));
-            String response = x.execute(readEdge);                                    // get response as string
+            String response = x.execute(edgeCount);                                    // get response as string
             System.out.println(response);                                               // print response string
             HashMap<String, String> result = httpResponseToResultMap(response);         // convert to result map
             if (result.containsKey("query_error")) {
