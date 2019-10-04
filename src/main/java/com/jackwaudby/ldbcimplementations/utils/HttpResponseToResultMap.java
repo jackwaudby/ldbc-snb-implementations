@@ -18,6 +18,7 @@ public class HttpResponseToResultMap {
     // result consists of list of maps with property key and the values as a list
     public static HashMap<String, String> httpResponseToResultMap(String httpResponse){
         JSONObject responseJson = new JSONObject(httpResponse); // convert to JSON
+//        System.out.println(responseJson.toString(2)); // print JSON pretty
 //        System.out.println("HTTP Response Message: " + httpResponse);
         HashMap<String,String> resultMap = new HashMap<>();
         try {
