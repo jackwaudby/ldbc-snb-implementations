@@ -33,7 +33,7 @@ public class LdbcShortQuery4MessageContentHandler implements OperationHandler<Ld
                 "try {" +
                 "post_exists = g.V().has('Post','id','" + messageId + "').hasNext();[];" +
                 "if (post_exists) {" +
-                "v=g.V().has('Post','id','" + messageId + "').valueMap('creationDate','imageFile').next();[];" +
+                "v=g.V().has('Post','id','" + messageId + "').valueMap('creationDate','imageFile','content').next();[];" +
                 "} else {" +
                 "v=g.V().has('Comment','id','" + messageId + "').valueMap('creationDate','content').next();[];" +
                 "};" +
@@ -62,11 +62,10 @@ public class LdbcShortQuery4MessageContentHandler implements OperationHandler<Ld
                 TX_ATTEMPTS = TX_ATTEMPTS + 1;
                 System.out.println("Gremlin Server Error: " + result.get("http_error"));
             } else {
-                if (result.get("content").isEmpty()) {
+                if (result.get("content").equals("")) {
                     endResult = new LdbcShortQuery4MessageContentResult(
                             result.get("imageFile"),
                             Long.parseLong(result.get("creationDate")));
-
                 } else {
                     endResult = new LdbcShortQuery4MessageContentResult(
                             result.get("content"),
