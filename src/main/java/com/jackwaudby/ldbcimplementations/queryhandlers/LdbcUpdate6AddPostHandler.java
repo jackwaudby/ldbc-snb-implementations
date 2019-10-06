@@ -6,6 +6,7 @@ import com.ldbc.driver.OperationHandler;
 import com.ldbc.driver.ResultReporter;
 import com.ldbc.driver.workloads.ldbc.snb.interactive.LdbcNoResult;
 import com.ldbc.driver.workloads.ldbc.snb.interactive.LdbcUpdate6AddPost;
+import org.json.JSONException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,6 @@ public class LdbcUpdate6AddPostHandler implements OperationHandler<LdbcUpdate6Ad
         String language = operation.language();
         String content = operation.content();
         int length = operation.length();
-
         long personId = operation.authorPersonId();
         long forumId = operation.forumId();
         long countryId = operation.countryId();
@@ -42,16 +42,12 @@ public class LdbcUpdate6AddPostHandler implements OperationHandler<LdbcUpdate6Ad
                 ".property('locationIP','" + locationIp  + "')" +
                 ".property('browserUsed','" + browserUsed  + "')" +
                 ".property('language','" + language  + "')" +
-                ".property('content','" + content  + "')" +
+                ".property('content',\\\"" + content  + "\\\")" +
                 ".property('length','"+ length + "').next();[];" +
                 "g.V().has('Person', 'id',"+ personId +").as('person').V(p).addE('hasCreator').to('person').next();[];" +
                 "g.V().has('Place', 'id',"+ countryId +").as('country').V(p).addE('isLocatedIn').to('country').next();[];" +
-                "g.V(p).as('forum').V().has('Forum','id'," +
-                forumId +
-                ").addE('containerOf').to('forum').next();[];" +
-                "tagid=" +
-                tagIds.toString() +
-                ";[];"+
+                "g.V(p).as('forum').V().has('Forum','id'," + forumId + ").addE('containerOf').to('forum').next();[];" +
+                "tagid=" + tagIds.toString() + ";[];"+
                 "for (item in tagid) { " +
                 "g.V().has('Tag', 'id', item).as('tag').V(p).addE('hasTag').to('tag').next();[];" +
                 "};" +
@@ -69,11 +65,10 @@ public class LdbcUpdate6AddPostHandler implements OperationHandler<LdbcUpdate6Ad
 
         int TX_ATTEMPTS = 0;
         int TX_RETRIES = 5;
-
         while (TX_ATTEMPTS < TX_RETRIES) {
             System.out.println("Attempt " + (TX_ATTEMPTS + 1));
-            String response = client.execute(queryString);                                // get response as string
-            HashMap<String, String> result = httpResponseToResultMap(response);      // convert to result map
+            String response = client.execute(queryString);                              // get response as string
+            HashMap<String, String> result = httpResponseToResultMap(response);         // convert to result map
             if (result.containsKey("query_error")) {
                 TX_ATTEMPTS = TX_ATTEMPTS + 1;
                 System.out.println("Query Error: " + result.get("query_error"));
@@ -85,10 +80,6 @@ public class LdbcUpdate6AddPostHandler implements OperationHandler<LdbcUpdate6Ad
                 break;
             }
         }
-
-
-        // pass result to driver
-        resultReporter.report(0, LdbcNoResult.INSTANCE, operation);
-
+        resultReporter.report(0, LdbcNoResult.INSTANCE, operation);          // pass result to driver
     }
 }
