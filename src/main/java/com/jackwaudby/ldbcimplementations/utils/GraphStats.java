@@ -26,8 +26,15 @@ public class GraphStats {
 
 //        Long vc = g.V().count().next();
 //        LOGGER.info("Vertex Count: "+ vc);
-        Long persons = g.V().hasLabel("Person").count().next();
-        LOGGER.info("Vertex Count: "+ persons);
+        Long person = g.V().hasLabel("Person").count().next();
+        Long forum = g.V().hasLabel("Forum").count().next();
+        Long post = g.V().hasLabel("Post").count().next();
+        Long comment = g.V().hasLabel("Comment").count().next();
+        LOGGER.info("Person Count: "+ person);
+        LOGGER.info("Forum Count: "+ forum);
+        LOGGER.info("Post Count: "+ post);
+        LOGGER.info("Comment Count: "+ comment);
+
 //        Long ec = g.E().count().next();
 //        LOGGER.info("Edge Count: "+ ec);
 

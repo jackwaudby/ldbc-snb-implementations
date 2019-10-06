@@ -42,7 +42,8 @@ public class LdbcUpdate6AddPostHandler implements OperationHandler<LdbcUpdate6Ad
                 ".property('locationIP','" + locationIp  + "')" +
                 ".property('browserUsed','" + browserUsed  + "')" +
                 ".property('language','" + language  + "')" +
-                ".property('content',\\\"" + content  + "\\\")" +
+//                ".property('content',\\\"" + content  + "\\\")" +
+                ".property('content','''" + content  + "''')" +
                 ".property('length','"+ length + "').next();[];" +
                 "g.V().has('Person', 'id',"+ personId +").as('person').V(p).addE('hasCreator').to('person').next();[];" +
                 "g.V().has('Place', 'id',"+ countryId +").as('country').V(p).addE('isLocatedIn').to('country').next();[];" +

@@ -22,7 +22,7 @@ public class LdbcUpdate7AddCommentHandler implements OperationHandler<LdbcUpdate
         long creationDate = operation.creationDate().getTime();
         String locationIp = operation.locationIp();
         String browserUsed = operation.browserUsed();
-        String content = operation.content();
+        String content = operation.content();//.replaceAll("'","\'");
         int length = operation.length();
 
         // outgoing edges
@@ -46,9 +46,8 @@ public class LdbcUpdate7AddCommentHandler implements OperationHandler<LdbcUpdate
                 "')" +
                 ".property('browserUsed','" +
                 browserUsed +
-                "').property('content','" +
-                content +
-                "')" +
+//                "').property('content',\\\"" + content + "\\\")" +
+                "').property('content','''" + content + "''')" +
                 ".property('length'," +
                 length +
                 ").next();[];" +
