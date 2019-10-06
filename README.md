@@ -6,4 +6,4 @@ Run validation:
 Passing Validation:
 + Short Reads 2/7
 + Complex Reads 0/14
-+ Updates 4/8
++ Updates 6/8
