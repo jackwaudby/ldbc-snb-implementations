@@ -6,6 +6,13 @@ Start JanusGraph Server:
 Run validation:
 `java -cp "target/janusgraph-1.0-SNAPSHOT.jar:target/dependencies/*" com.ldbc.driver.Client -P validation/interactive-validate.properties`
 
+Start JanusGraph console (used for testing): 
+```
+bin/gremlin.sh
+graph = JanusGraphFactory.open('conf/janusgraph-berkeleyje.properties')
+g = graph.traversal()
+```
+
 Passing Validation:
 + Short Reads 2/7
 + Complex Reads 0/14
