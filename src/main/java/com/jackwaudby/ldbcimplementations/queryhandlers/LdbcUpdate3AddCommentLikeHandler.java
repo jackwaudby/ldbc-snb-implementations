@@ -28,7 +28,7 @@ public class LdbcUpdate3AddCommentLikeHandler implements OperationHandler<LdbcUp
                 "v = g.V().has('Person','id'," +
                 personId +
                 ").next();[];" +
-                "g.V().has('Post', 'id'," +
+                "g.V().has('Comment', 'id'," +
                 commentId +
                 ").as('comment').V(v).addE('likes').property('creationDate'," +
                 creationDate +
