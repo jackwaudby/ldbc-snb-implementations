@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 public class JanusGraphDb extends Db {
 
+    public static int TX_RETRIES = 5;           // transaction retries
 
     /**
      * Static nested class that creates a JanusGraph client
