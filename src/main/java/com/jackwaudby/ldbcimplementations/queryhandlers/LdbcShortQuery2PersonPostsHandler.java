@@ -25,11 +25,11 @@ public class LdbcShortQuery2PersonPostsHandler implements OperationHandler<LdbcS
 
         // TODO: Add transaction logic to query string
         // TODO: Add transaction retry logic to response
-
+        long limit = operation.limit();
         long personId = operation.personId();                                   // start person
         JanusGraphDb.JanusGraphClient client = dbConnectionState.getClient();   // janusgraph client
         String queryString = "{\"gremlin\": \"" +                               // gremlin query string
-                "g.V().has('Person','id'," + personId + ").inE('hasCreator').outV().order().by('creationDate',decr).limit(10).as('message').union(repeat(out('replyOf').simplePath()).until(hasLabel('Post')).as('originalPost').out('hasCreator').as('originalAuthor'),hasLabel('Post').as('originalPost').outE('hasCreator').inV().as('originalAuthor')).select('message','originalPost','originalAuthor').by(valueMap('id','imageFile','content','creationDate')).by(valueMap('id')).by(valueMap('id','firstName','lastName')).toList();" +
+                "g.V().has('Person','id'," + personId + ").inE('hasCreator').outV().order().by('creationDate',decr).limit("+limit+").as('message').union(repeat(out('replyOf').simplePath()).until(hasLabel('Post')).as('originalPost').out('hasCreator').as('originalAuthor'),hasLabel('Post').as('originalPost').outE('hasCreator').inV().as('originalAuthor')).select('message','originalPost','originalAuthor').by(valueMap('id','imageFile','content','creationDate')).by(valueMap('id')).by(valueMap('id','firstName','lastName')).toList();" +
                 "\"" +
                 "}";
         String response = client.execute(queryString);                          // execute query
@@ -39,10 +39,10 @@ public class LdbcShortQuery2PersonPostsHandler implements OperationHandler<LdbcS
                 = new ArrayList<>();
         for (int i = 0; i < result.size(); i++) {                               // for each result
             String messageContent;                                              // set message content
-            if (result.get(i).get("content").equals("")) {                      // imagefile
-                messageContent = result.get(i).get("imageFile");
+            if (result.get(i).get("messageContent").equals("")) {                      // imagefile
+                messageContent = result.get(i).get("messageImageFile");
             } else {                                                            // content
-                messageContent = result.get(i).get("content");
+                messageContent = result.get(i).get("messageContent");
             }
         LdbcShortQuery2PersonPostsResult res                                    // create result object
                 = new LdbcShortQuery2PersonPostsResult(
