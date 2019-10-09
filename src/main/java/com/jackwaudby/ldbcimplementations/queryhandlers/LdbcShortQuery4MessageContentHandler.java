@@ -32,7 +32,7 @@ public class LdbcShortQuery4MessageContentHandler implements OperationHandler<Ld
         String queryString = "{\"gremlin\": \"" +
                 "try {" +
                 "v = g.V().has('Comment','id', " + messageId + ").fold()" +
-                ".coalesce(unfold(),V().has('Post','id',34359738368))" +
+                ".coalesce(unfold(),V().has('Post','id'," + messageId + "))" +
                 ".valueMap('creationDate','content','imageFile');[];" +
                 "graph.tx().commit();[];" +
                 "} catch (Exception e) {" +
