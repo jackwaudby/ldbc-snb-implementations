@@ -34,7 +34,7 @@ public class GraphLoader {
         String pathToData = ldbcSnbDatagenHome + "/social_network/";                // path to data
         bulkLoadVertices(pathToData,graph,g);                                       // load vertices
         bulkLoadEdges(pathToData,graph,g);                                          // load edges
-        elementCount(g);                                                            // print graph stats
+//        elementCount(g);                                                            // print graph stats
         closeGraph(g);                                                              // close graph traversal source
         LOGGER.info("Closing Graph Traversal Source");
         graph.close();                                                              // close graph
