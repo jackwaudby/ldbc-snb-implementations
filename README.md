@@ -14,7 +14,7 @@ g = graph.traversal()
 ```
 
 Passing Validation:
-+ Short Reads 3/7
++ Short Reads 4/7
 + Complex Reads 0/14
 + Updates 8/8
 
@@ -28,5 +28,7 @@ Passing Validation:
 | 6      | `(Post)`                         | 79339    | 205        | 79544 |  
 | 7      | `(Comment)`                      | 94241    | 283        | 94524 |
 | 8      | `(Person)-[:knows]->(Person)`    | 31046    | 119        | 31165 |   
+
+
 
 
