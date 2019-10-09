@@ -24,12 +24,15 @@ public class LdbcShortQuery5MessageCreatorHandler implements OperationHandler<Ld
         JanusGraphDb.JanusGraphClient client = dbConnectionState.getClient();       // get JanusGraph client
         String queryString = "{\"gremlin\": \"" +                                   // gremlin query string
                 "try {" +
-                "post_exists = g.V().has('Post','id','" + messageId + "').hasNext();[];" +
-                "if (post_exists) {" +
-                "v=g.V().has('Post','id','" + messageId + "').out('hasCreator').valueMap('id','firstName','lastName').next();[];" +
-                "} else {" +
-                "v=g.V().has('Comment','id','" + messageId + "').out('hasCreator').valueMap('id','firstName','lastName').next();[];" +
-                "};" +
+                "v=g.V().has('Comment','id',"+messageId+").fold()" +
+                ".coalesce(unfold(),V().has('Post','id',"+messageId+"))" +
+                ".out('hasCreator').valueMap('id','firstName','lastName').next();[];" +
+//                "post_exists = g.V().has('Post','id','" + messageId + "').hasNext();[];" +
+//                "if (post_exists) {" +
+//                "v=g.V().has('Post','id','" + messageId + "').out('hasCreator').valueMap('id','firstName','lastName').next();[];" +
+//                "} else {" +
+//                "v=g.V().has('Comment','id','" + messageId + "').out('hasCreator').valueMap('id','firstName','lastName').next();[];" +
+//                "};" +
                 "graph.tx().commit();[];" +
                 "} catch (Exception e) {" +
                 "errorMessage =[e.toString()];[];" +
