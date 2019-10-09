@@ -31,19 +31,17 @@ public class LdbcShortQuery4MessageContentHandler implements OperationHandler<Ld
         // gremlin query string
         String queryString = "{\"gremlin\": \"" +
                 "try {" +
-                "post_exists = g.V().has('Post','id','" + messageId + "').hasNext();[];" +
-                "if (post_exists) {" +
-                "v=g.V().has('Post','id','" + messageId + "').valueMap('creationDate','imageFile','content').next();[];" +
-                "} else {" +
-                "v=g.V().has('Comment','id','" + messageId + "').valueMap('creationDate','content').next();[];" +
-                "};" +
+                "v = g.V().has('Comment','id', " + messageId + ").fold()" +
+                ".coalesce(unfold(),V().has('Post','id',34359738368))" +
+                ".valueMap('creationDate','content','imageFile');[];" +
                 "graph.tx().commit();[];" +
                 "} catch (Exception e) {" +
                 "errorMessage =[e.toString()];[];" +
                 "v=[query_error:errorMessage];[];" +
                 "graph.tx().rollback();[];" +
                 "};" +
-                "v;\"" +
+                "v;" +
+                "\"" +
                 "}";
 
 
