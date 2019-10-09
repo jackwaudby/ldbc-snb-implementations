@@ -42,7 +42,8 @@ public class LdbcShortQuery1PersonProfileHandler implements OperationHandler<Ldb
                 = new ArrayList<>();
         for (int i = 0; i < result.size(); i++) {                               // for each result
             LdbcShortQuery1PersonProfileResult res                                    // create result object
-                    = new LdbcShortQuery1PersonProfileResult(result.get(i).get("firstName"),
+                    = new LdbcShortQuery1PersonProfileResult(
+                            result.get(i).get("personFirstName"),
                         result.get(i).get("personLastName"),
                         Long.parseLong(result.get(i).get("personBirthday")),
                         result.get(i).get("personLocationIP"),
