@@ -33,7 +33,7 @@ public class LdbcShortQuery4MessageContentHandler implements OperationHandler<Ld
                 "try {" +
                 "v = g.V().has('Comment','id', " + messageId + ").fold()" +
                 ".coalesce(unfold(),V().has('Post','id'," + messageId + "))" +
-                ".valueMap('creationDate','content','imageFile');[];" +
+                ".valueMap('creationDate','content','imageFile').next();[];" +
                 "graph.tx().commit();[];" +
                 "} catch (Exception e) {" +
                 "errorMessage =[e.toString()];[];" +
