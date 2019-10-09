@@ -48,11 +48,11 @@ public class LdbcShortQuery2PersonPostsHandler implements OperationHandler<LdbcS
                 = new LdbcShortQuery2PersonPostsResult(
                         Long.parseLong(result.get(i).get("messageId")),
                         messageContent,
-                        Long.parseLong(result.get(i).get("creationDate")),
+                        Long.parseLong(result.get(i).get("messageCreationDate")),
                         Long.parseLong(result.get(i).get("originalPostId")),
                         Long.parseLong(result.get(i).get("originalAuthorId")),
-                        result.get(i).get("firstName"),
-                        result.get(i).get("lastName")
+                        result.get(i).get("originalAuthorFirstName"),
+                        result.get(i).get("originalAuthorLastName")
         );
             endResult.add(res);                                                 // add to result list
         }
