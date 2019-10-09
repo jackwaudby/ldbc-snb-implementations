@@ -25,8 +25,9 @@ public class LdbcShortQuery3PersonFriendsHandler implements OperationHandler<Ldb
         JanusGraphDb.JanusGraphClient client = dbConnectionState.getClient();
         // gremlin query string
         String queryString = "{\"gremlin\": \"" +
-                "g.V().has('Person','id'," + personId + ")" +
-                ".bothE('knows').order().by('creationDate',decr).as('edge').otherV().as('friend').select('edge','friend').by(valueMap('creationDate')).by(valueMap('id','firstName','lastName')).toList();" +
+//                "g.V().has('Person','id'," + personId + ")" +
+//                ".bothE('knows').order().by('creationDate',decr).as('edge').otherV().as('friend').select('edge','friend').by(valueMap('creationDate')).by(valueMap('id','firstName','lastName')).toList();" +
+                "g.V().has('Person','id'," + personId + ").bothE('knows').as('edge').otherV().as('friend').order().by(select('edge').by('creationDate'),desc).by('id',asc).select('edge','friend').by(valueMap('creationDate')).by(valueMap('id','firstName','lastName')).toList();" +
                 "\"}";
         String response = client.execute(queryString);                          // execute query
         ArrayList<HashMap<String, String>> result                               // parse result
