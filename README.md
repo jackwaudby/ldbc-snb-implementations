@@ -14,7 +14,7 @@ g = graph.traversal()
 ```
 
 Passing Validation:
-+ Short Reads 5/7
++ Short Reads 6/7
 + Complex Reads 0/14
 + Updates 8/8
 
