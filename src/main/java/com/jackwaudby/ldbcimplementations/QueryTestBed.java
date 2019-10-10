@@ -21,19 +21,17 @@ import static com.jackwaudby.ldbcimplementations.utils.HttpResponseToResultMap.h
 public class QueryTestBed {
     public static void main(String[] args)  {
 
-
-
-        String queryString = "{\"gremlin\": \"" +
-                "g.V().has('Person','id'," + 5497558141619L + ")" +
-                ".inE('hasCreator').outV().order().by('creationDate',decr).limit(10).as('message')" +
-                ".union(repeat(out('replyOf').simplePath()).until(hasLabel('Post')).as('originalPost').out('hasCreator').as('originalAuthor')," +
-                "hasLabel('Post').as('originalPost').outE('hasCreator').inV().as('originalAuthor'))" +
-                ".select('message','originalPost','originalAuthor')" +
-                ".by(valueMap('id','imageFile','content','creationDate')).by(valueMap('id'))" +
-                ".by(valueMap('id','firstName','lastName')).toList();" +
+        String queryString = "{\"gremlin\": \"" +                               // gremlin query string
+                "g.V().has('Post','id',34359738368).fold()" +
+                ".coalesce(unfold()," +
+                "V().has('Comment','id',25769803887).repeat(out('replyOf').simplePath()).until(hasLabel('Post')))" +
+                ".in('containerOf').as('forum')" +
+                ".out('hasModerator').as('moderator')" +
+                ".select('forum','moderator')" +
+                ".by(valueMap('id','title'))" +
+                ".by(valueMap('id','firstName','lastName'));" +
                 "\"" +
                 "}";
-
 
         Map< String,String> hm = new HashMap<>();                               // init test bed
         hm.put("url","http://localhost:8182");
@@ -43,6 +41,7 @@ public class QueryTestBed {
         System.out.println(response);
         ArrayList<HashMap<String, String>> result                               // parse result
                 = httpResponseToResultList(response);
+
         System.out.println(result);
 //        int TX_ATTEMPTS = 0;
 //        int TX_RETRIES = 5;
