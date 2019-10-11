@@ -21,15 +21,18 @@ import static com.jackwaudby.ldbcimplementations.utils.HttpResponseToResultMap.h
 public class QueryTestBed {
     public static void main(String[] args)  {
 
+        // originalMessage=g.V().has('Post','id',34359748472).fold().coalesce(unfold(),V().has('Comment','id',34359748472)).next()
+        // originalAuthor=g.V(originalMessage).out('hasCreator').next()
+        // replies=g.V(originalMessage).in('replyOf').order().by('creationDate',desc).by('id',asc).toList()
+        // repliesAuthor=g.V(replies).out('hasCreator').as('replyAuthor').toList()
+        // g.V(repliesAuthor).as('repliesAuthor').choose(bothE('knows').otherV().hasId(originalAuthor.id()),constant(true),constant(false)).as('knows').select('knows','repliesAuthor')
+        // g.V().has('Post','id',34359748472).fold().coalesce(unfold(),V().has('Comment','id',34359748472)).as('originalMessage').in('replyOf').as('comment').order().by(select('comment').by('creationDate'),desc).by('id',asc).out('hasCreator').as('replyAuthor').choose(bothE('knows').otherV().hasId(originalAuthor.id()),constant(true),constant(false)).as('knows').select('comment','replyAuthor','knows').by(valueMap('id','content','creationDate')).by(valueMap('id','firstName','lastName')).by()
+
+
         String queryString = "{\"gremlin\": \"" +                               // gremlin query string
-                "g.V().has('Post','id',34359738368).fold()" +
-                ".coalesce(unfold()," +
-                "V().has('Comment','id',25769803887).repeat(out('replyOf').simplePath()).until(hasLabel('Post')))" +
-                ".in('containerOf').as('forum')" +
-                ".out('hasModerator').as('moderator')" +
-                ".select('forum','moderator')" +
-                ".by(valueMap('id','title'))" +
-                ".by(valueMap('id','firstName','lastName'));" +
+                "originalMessage=g.V().has('Post','id',8590044640).fold().coalesce(unfold(),V().has('Comment','id',8590044640)).next();" +
+                "originalAuthor=g.V(originalMessage).out('hasCreator').next();" +
+                "g.V(originalMessage).as('originalMessage').in('replyOf').as('comment').order().by(select('comment').by('creationDate'),desc).by('id',asc).out('hasCreator').as('replyAuthor').choose(bothE('knows').otherV().hasId(originalAuthor.id()),constant(true),constant(false)).as('knows').select('comment','replyAuthor','knows').by(valueMap('id','content','creationDate')).by(valueMap('id','firstName','lastName')).by(fold());" +
                 "\"" +
                 "}";
 
