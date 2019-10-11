@@ -33,36 +33,45 @@ public class HttpResponseToResultList {
             for (int j = 0; j < result.length(); j++) {                                 // for each path element
                 String pathElementKey = result.get(j).toString();                       // get path element key
                 j = j + 1;
-                JSONArray pathElementValue =
-                        result.getJSONObject(j).getJSONArray("@value");             // get path element value
-                try {                                                                    // if path element is a vertex
-                    for (int k = 0; k < pathElementValue.length(); k++) {                // for each property in path element value
-                        String propertyKey = pathElementValue.get(k).toString();         // get property key
-                        propertyKey = pathElementKey +                                       // append element name to property key
-                                propertyKey.substring(0, 1).toUpperCase() +
-                                propertyKey.substring(1);
-                        k = k + 1;
-                        String propertyValue;
-                        try {                                                                // get property value, either String or JSONObject (converted to String)
-                            propertyValue = pathElementValue.getJSONObject(k)
-                                    .getJSONArray("@value").getJSONObject(0).get("@value").toString();
-                        } catch (JSONException e) {
-                            propertyValue = pathElementValue
-                                    .getJSONObject(k).getJSONArray("@value").getString(0);
+
+                    JSONArray pathElementValue =
+                            result.getJSONObject(j).getJSONArray("@value");             // get path element value
+                if (pathElementValue.length() == 1) { // catches the case when an element in the path only returns a boolean
+                    String propertyValue = String.valueOf(pathElementValue.getBoolean(0));
+                    propertyPair.put(pathElementKey, propertyValue);
+                } else {
+                    try {                                                                    // if path element is a vertex
+
+                        for (int k = 0; k < pathElementValue.length(); k++) {                // for each property in path element value
+                            String propertyKey = pathElementValue.get(k).toString();         // get property key
+                            propertyKey = pathElementKey +                                       // append element name to property key
+                                    propertyKey.substring(0, 1).toUpperCase() +
+                                    propertyKey.substring(1);
+                            k = k + 1;
+                            String propertyValue;
+                            try {                                                                // get property value, either String or JSONObject (converted to String)
+                                propertyValue = pathElementValue.getJSONObject(k)
+                                        .getJSONArray("@value").getJSONObject(0).get("@value").toString();
+                            } catch (JSONException e) {
+                                propertyValue = pathElementValue
+                                        .getJSONObject(k).getJSONArray("@value").getString(0);
+                            }
+                            propertyPair.put(propertyKey, propertyValue);                        // put in hashmap
                         }
-                        propertyPair.put(propertyKey, propertyValue);                        // put in hashmap
-                    }
-                } catch (JSONException e ){                                         // if path element is an edge
-                    for (int k = 0; k < pathElementValue.length(); k++) {                    // for each property in path element value
-                        String propertyKey = pathElementValue.get(k).toString();             // get property key
-                        propertyKey = pathElementKey +                                       // append element name to property key
-                                propertyKey.substring(0, 1).toUpperCase() +
-                                propertyKey.substring(1);                                    // multiple path element can have same property key - break on path element name
-                        k = k + 1;
-                        String propertyValue = pathElementValue.getJSONObject(k).get("@value").toString();
-                        propertyPair.put(propertyKey, propertyValue);                        // put in hashmap
+
+                    } catch (JSONException e) {                                                  // if path element is an edge
+                        for (int k = 0; k < pathElementValue.length(); k++) {                    // for each property in path element value
+                            String propertyKey = pathElementValue.get(k).toString();             // get property key
+                            propertyKey = pathElementKey +                                       // append element name to property key
+                                    propertyKey.substring(0, 1).toUpperCase() +
+                                    propertyKey.substring(1);                                    // multiple path element can have same property key - break on path element name
+                            k = k + 1;
+                            String propertyValue = pathElementValue.getJSONObject(k).get("@value").toString();
+                            propertyPair.put(propertyKey, propertyValue);                        // put in hashmap
+                        }
                     }
                 }
+
             }
             resultList.add(propertyPair);                                               // add hashmap for result in arraylist
         }
