@@ -159,6 +159,8 @@ public class JanusGraphDb extends Db {
         connectionState = new JanusGraphConnectionState(connectionUrl); // create JanusGraph connection state
 
         // TODO: register operation handlers
+        registerOperationHandler(LdbcQuery9.class,LdbcQuery9Handler.class);
+
         registerOperationHandler(LdbcShortQuery1PersonProfile.class, LdbcShortQuery1PersonProfileHandler.class);
         registerOperationHandler(LdbcShortQuery2PersonPosts.class,LdbcShortQuery2PersonPostsHandler.class);
         registerOperationHandler(LdbcShortQuery3PersonFriends.class,LdbcShortQuery3PersonFriendsHandler.class);
@@ -166,6 +168,7 @@ public class JanusGraphDb extends Db {
         registerOperationHandler(LdbcShortQuery5MessageCreator.class, LdbcShortQuery5MessageCreatorHandler.class);
         registerOperationHandler(LdbcShortQuery6MessageForum.class,LdbcShortQuery6MessageForumHandler.class);
         registerOperationHandler(LdbcShortQuery7MessageReplies.class,LdbcShortQuery7MessageRepliesHandler.class);
+
         registerOperationHandler(LdbcUpdate1AddPerson.class, LdbcUpdate1AddPersonHandler.class);
         registerOperationHandler(LdbcUpdate2AddPostLike.class, LdbcUpdate2AddPostLikeHandler.class);
         registerOperationHandler(LdbcUpdate3AddCommentLike.class, LdbcUpdate3AddCommentLikeHandler.class);
