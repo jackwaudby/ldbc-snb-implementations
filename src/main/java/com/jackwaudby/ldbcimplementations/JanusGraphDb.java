@@ -160,9 +160,10 @@ public class JanusGraphDb extends Db {
 
         // TODO: register operation handlers
         registerOperationHandler(LdbcQuery2.class,LdbcQuery2Handler.class);
+        registerOperationHandler(LdbcQuery8.class,LdbcQuery8Handler.class);
         registerOperationHandler(LdbcQuery9.class,LdbcQuery9Handler.class);
         registerOperationHandler(LdbcQuery11.class,LdbcQuery11Handler.class);
-//
+
         registerOperationHandler(LdbcShortQuery1PersonProfile.class, LdbcShortQuery1PersonProfileHandler.class);
         registerOperationHandler(LdbcShortQuery2PersonPosts.class,LdbcShortQuery2PersonPostsHandler.class);
         registerOperationHandler(LdbcShortQuery3PersonFriends.class,LdbcShortQuery3PersonFriendsHandler.class);
