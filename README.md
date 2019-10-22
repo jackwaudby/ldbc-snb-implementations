@@ -15,7 +15,7 @@ g = graph.traversal()
 
 Passing Validation:
 + Short Reads 7/7
-+ Complex Reads 7/14
++ Complex Reads 8/14
 + Updates 8/8
 
 | Update | GraphElement                     | BulkLoad | Validation | Total |   
