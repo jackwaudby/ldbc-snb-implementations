@@ -63,8 +63,8 @@ public class LoadSchemaIndexes {
             mgmt.makePropertyKey("lastName").dataType(String.class).cardinality(Cardinality.SINGLE).make();     // Person
             mgmt.makePropertyKey("gender").dataType(String.class).cardinality(Cardinality.SINGLE).make();       // Person
             mgmt.makePropertyKey("birthday").dataType(Date.class).cardinality(Cardinality.SINGLE).make();       // Person
-            mgmt.makePropertyKey("email").dataType(String.class).cardinality(Cardinality.SET).make();           // Person
-            mgmt.makePropertyKey("speaks").dataType(String.class).cardinality(Cardinality.SET).make();        // Person, Post (Message)
+            mgmt.makePropertyKey("email").dataType(String.class).cardinality(Cardinality.LIST).make();           // Person
+            mgmt.makePropertyKey("speaks").dataType(String.class).cardinality(Cardinality.LIST).make();        // Person, Post (Message)
             mgmt.makePropertyKey("language").dataType(String.class).cardinality(Cardinality.SINGLE).make();        // Person, Post (Message)
             mgmt.makePropertyKey("imageFile").dataType(String.class).cardinality(Cardinality.SINGLE).make();    // Post (Message)
             mgmt.makePropertyKey("type").dataType(String.class).cardinality(Cardinality.SINGLE).make();         // Company/University (Organisation), City/Country/Continent (Place)
