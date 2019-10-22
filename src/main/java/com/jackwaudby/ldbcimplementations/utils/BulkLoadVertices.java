@@ -99,7 +99,7 @@ public class BulkLoadVertices {
                                             String delimiter2 = ":"; // parse string
                                             String[] setArray = record.get(i).split(delimiter2);
                                             for (String s : setArray) { // add in loop
-                                                g.V(v).property(VertexProperty.Cardinality.set, header.get(i), s).next();
+                                                g.V(v).property(VertexProperty.Cardinality.list, header.get(i), s).next();
                                             }
                                         } else { // String
                                             g.V(v).property(header.get(i), record.get(i)).next();
