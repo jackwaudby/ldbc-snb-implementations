@@ -41,7 +41,6 @@ public class LdbcQuery7Handler implements OperationHandler<LdbcQuery7, JanusGrap
         String response = client.execute(queryString);                          // execute query
         ArrayList<HashMap<String, String>> result                               // parse result
                 = httpResponseToResultList(response);
-        System.out.println(result);
         ArrayList<LdbcQuery7Result> endResult                                   // init result list
                 = new ArrayList<>();
         for (int i = 0; i < result.size(); i++) {                               // for each result
