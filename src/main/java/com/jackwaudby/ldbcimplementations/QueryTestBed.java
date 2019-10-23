@@ -12,18 +12,13 @@ public class QueryTestBed {
     public static void main(String[] args) {
 
         String queryString = "{\"gremlin\": \"" +
-                "g.withSack(0).V().has('Person','id',3298534884077)." +
-                "repeat(both('knows').simplePath().sack(sum).by(constant(1))).emit().times(3)." +
-                "dedup().has('Person','firstName','Karim')." +
-                "order().by(sack(),asc).by('lastName',asc).by('id',asc)." +
-                "local(union(" +
-                "valueMap('lastName','id','email','birthday','creationDate','gender','browserUsed','locationIP','speaks'), " +
-                "out('isLocatedIn').valueMap('name')," +
-                "sack().fold(), " +
-                "outE('workAt').as('workFrom').inV().as('company').out('isLocatedIn').as('country')." +
-                "select('company','workFrom','country').by(valueMap('name')).by(valueMap()).fold()," +
-                "outE('studyAt').as('studyFrom').inV().as('university').out('isLocatedIn').as('country')." +
-                "select('university','studyFrom','country').by(valueMap('name')).by(valueMap()).fold()).fold())" +
+                " g.V().has('Person','id',4398046514041)." +
+                " choose(" +
+                " repeat(both().dedup()).until(has('Person','id',3)).limit(1).path().count(local).is(gt(0))," +
+                " repeat(both().simplePath()).until(has('Person','id',3)).limit(1).path().count(local)." +
+                " constant(-1)" +
+                " )." +
+                " fold()" +
                 "\"" +
                 "}";
 
