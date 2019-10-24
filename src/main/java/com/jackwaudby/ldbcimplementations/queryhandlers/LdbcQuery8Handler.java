@@ -34,7 +34,6 @@ public class LdbcQuery8Handler implements OperationHandler<LdbcQuery8, JanusGrap
                 "select('message','person')." +
                 "by(valueMap('id','creationDate','content'))." +
                 "by(valueMap('id','firstName','lastName'))" +
-
                 "\"" +
                 "}";
         String response = client.execute(queryString);                          // execute query
