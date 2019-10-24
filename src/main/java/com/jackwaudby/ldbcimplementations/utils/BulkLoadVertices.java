@@ -96,7 +96,7 @@ public class BulkLoadVertices {
                                             SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
                                             g.V(v).property(header.get(i), dateTimeFormat.parse(record.get(i))).next();
                                         } else if (setProperties.contains(header.get(i))) { // Set
-                                            String delimiter2 = ":"; // parse string
+                                            String delimiter2 = ";"; // parse string
                                             String[] setArray = record.get(i).split(delimiter2);
                                             for (String s : setArray) { // add in loop
                                                 g.V(v).property(VertexProperty.Cardinality.list, header.get(i), s).next();
