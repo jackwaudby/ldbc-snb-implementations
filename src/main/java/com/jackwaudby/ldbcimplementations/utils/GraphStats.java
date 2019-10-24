@@ -19,6 +19,7 @@ public class GraphStats {
         elementCount(g);
         CloseGraph.closeGraph(g);
         graph.close();
+
     }
 
     public static void elementCount(GraphTraversalSource g){
@@ -31,6 +32,8 @@ public class GraphStats {
         Long hasMember = g.E().hasLabel("hasMember").count().next();
         Long likesComment = g.V().hasLabel("Person").outE().hasLabel("likes").inV().hasLabel("Comment").count().next();
         Long knows = g.E().hasLabel("knows").count().next();
+        Long vertices = g.V().count().next();
+        Long edges = g.E().count().next();
 
         LOGGER.info("(Person): "+ person);
         LOGGER.info("(Person)-[:likes]->(Post): "+ likesPost);
@@ -40,6 +43,9 @@ public class GraphStats {
         LOGGER.info("(Post): "+ post);
         LOGGER.info("(Comment): "+ comment);
         LOGGER.info("(Person)-[:knows]->(Person): "+ knows);
+        LOGGER.info("Total Vertices: "+ vertices);
+        LOGGER.info("Total Edges: "+ edges);
+
 
 
     }
