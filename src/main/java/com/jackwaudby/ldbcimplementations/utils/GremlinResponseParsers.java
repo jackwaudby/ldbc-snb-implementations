@@ -7,8 +7,17 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * This class includes a number of methods for parsing HTTP responses from the Gremlin Server.
+ * They are written in a manner to allow composition.
+ */
 public class GremlinResponseParsers {
 
+    /**
+     * This method converts a Gremlin list into a Java ArrayList of JSONObjects.
+     * @param list JSONObject containing a JSONArray (list)
+     * @return ArrayList of JSONObjects
+     */
     static public ArrayList<JSONObject> gremlinListToArrayList (JSONObject list) {
 
         ArrayList<JSONObject> results = new ArrayList<>();
@@ -21,8 +30,8 @@ public class GremlinResponseParsers {
     }
 
     /**
-     * Takes the HTTP Gremlin response string and converts it into a result list
-     * @param response HTTP Gremlin response string
+     * This method converts the initial HTTP response string into a Java ArrayList of JSONObjects.
+     * @param response HTTP response string
      * @return ArrayList of JSON Objects
      */
     static public ArrayList<JSONObject> gremlinResponseToResultArrayList (String response) {
@@ -41,9 +50,9 @@ public class GremlinResponseParsers {
     }
 
     /**
-     * Converts a gremlin map into a hashmap of property key-value pairs
-     * @param gremlinMap gremlin JSONObject of type map
-     * @return HashMap with String key and values
+     * This method converts a Gremlin map into a Java HashMap of String-JSONObject pairs
+     * @param gremlinMap JSONObject containing a JSONArray (map)
+     * @return HashMap with String key and JSONObject values
      */
     static public HashMap<String,JSONObject> gremlinMapToHashMap (JSONObject gremlinMap) {
 
@@ -63,8 +72,8 @@ public class GremlinResponseParsers {
 
 
     /**
-     * Returns the property value
-     * @param propertyValue JSONObject representing the value in a hashmap key-value pair
+     * This method extracts the value from a Gremlin key-value pair. This must be a list.
+     * @param propertyValue JSONObject representing the value in a HashMap key-value pair
      * @return String representation of the value. Note, returns null if the JSONObject is not a list -
      * all property values are lists
      */
