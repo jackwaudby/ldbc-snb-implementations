@@ -1,33 +1,97 @@
 # LDBC SNB Implementation for JanusGraph
 
-Start JanusGraph Server:
-`bin/gremlin-server.sh conf/gremlin-server/gremlin-server-berkeleyje.yaml`
+## Step-by-step Guide ##
 
-Run validation:
-`java -cp "target/janusgraph-1.0-SNAPSHOT.jar:target/dependencies/*" com.ldbc.driver.Client -P validation/interactive-validate.properties`
+1. Delete existing database using `delete-db.sh`
+2. Load chosen validation set in DATAGEN home directory (this is where the loader looks for the data) using `choose-validation.sh`
+3. If data format is CSV then preprocess using `preprocessing.sh`
+3. Load schema, indexes, vertices and edges 
+5. Start JanusGraph Server: `bin/gremlin-server.sh conf/gremlin-server/gremlin-server-berkeleyje.yaml`
+6. Set driver configuration for validation in `interactive-validate.properties`
+7. Run validation:`java -cp "target/janusgraph-1.0-SNAPSHOT.jar:target/dependencies/*" com.ldbc.driver.Client -P validation/interactive-validate.properties`
 
-Start JanusGraph console (used for testing): 
+
+N.B. Starting JanusGraph console (used for testing): 
 ```
 bin/gremlin.sh
 graph = JanusGraphFactory.open('conf/janusgraph-berkeleyje.properties')
 g = graph.traversal()
 ```
 
+## Validation Sets ##
+
+This repository contains 2 validation sets. Each sets contains a `social_network` and `substitution_parameters`, along with `validation_params.csv`. 
+
+### Validation Set 1 ###
+
+This validation set was taken from the Neo4j directory in the [`ldbc_interactive_validation` repo](https://github.com/ldbc/ldbc_snb_interactive_validation) 
+
+|--------------------|--------|
+| Data Format:       | CSV    |
+| Operations:        | 11929  |
+| SF:                | 0.3    |
+| Vertex Count:      | ~212k  |
+| Edge Count:        | ~1.11m |
+| Vertex Load Time:  | 75s    |
+| Edge Load Time:    | 496s   |
+|--------------------|--------|
+
 Passing Validation:
 + Short Reads 7/7
-+ Complex Reads 8/14
++ Complex Reads 9/14
 + Updates 8/8
 
-| Update | GraphElement                     | BulkLoad | Validation | Total |   
-|--------|----------------------------------|----------|------------|-------|
-| 1      | `(Person)`                       | 2747     | 22         | 2769  |
-| 2      | `(Person)-[:likes]->(Post)`      | 36658    | 283        | 36941 |
-| 3      | `(Person)-[:likes]->(Comment)`   | 46737    | 162        | 46899 |
-| 4      | `(Forum)`                        | 10032    | 22         | 10054 |
-| 5      | `(Person)-[:hasMember]->(Forum)` | 145407   | 1056       | 146463|
-| 6      | `(Post)`                         | 79339    | 205        | 79544 |  
-| 7      | `(Comment)`                      | 94241    | 283        | 94524 |
-| 8      | `(Person)-[:knows]->(Person)`    | 31046    | 119        | 31165 |   
+Missing handler implementations for 5 operation types
++ LdbcQuery10
++ LdbcQuery12
++ LdbcQuery13
++ LdbcQuery14
++ LdbcQuery5
+
+| Operation  | Incorrect Result |
+|------------|------------------|
+| LdbcQuery3 | 1                |
+
+Issue: expected result seems to be ordered descending by `totalCount` and then `personId` (ascending). My implementation of `LdbcQuery3` orders by `countX` (descending) then `personId` (ascending) as per the [specification](https://ldbc.github.io/ldbc_snb_docs/ldbc-snb-specification.pdf).
+
+### Validation Set 2 ###
+
+This validation set was generated using the [Cypher implementation repository](https://github.com/ldbc/ldbc_snb_implementations). 
+
+|-------------------|--------------|
+| Data Format:      | CSVComposite |
+| Operations:       | 1321         |
+| SF:               | 0.3          |
+| Vertex Count:     | ~210k        |
+| Edge Count:       | ~1.09m       |
+| Vertex Load Time: | 74s          |
+| Edge Load Time:   | 793s         |
+|-------------------|--------------|
+
+Passing Validation:
++ Short Reads 7/7
++ Complex Reads 9/14
++ Updates 8/8
+
+Missing handler implementations for 5 operation types
++ LdbcQuery10
++ LdbcQuery12
++ LdbcQuery13
++ LdbcQuery14
++ LdbcQuery5
+
+| Operation  | Incorrect Result |
+|------------|------------------|
+| LdbcQuery1 | 1                |
+
+
+Issues: expected answer is including start person and it should not (see Complex Read 1 in  [specification](https://ldbc.github.io/ldbc_snb_docs/ldbc-snb-specification.pdf)). 
+
+
+
+
+
+
 
 
 
