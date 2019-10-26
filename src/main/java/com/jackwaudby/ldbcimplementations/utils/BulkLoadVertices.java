@@ -37,7 +37,7 @@ public class BulkLoadVertices {
         dateTimeProperties.add("joinDate");
         dateTimeProperties.add("creationDate");
         List<String> setProperties = new ArrayList<>();                         // properties that are Set type
-        setProperties.add("speaks");
+        setProperties.add("language");
         setProperties.add("email");
 
         String validVertexFiles = "comment_0_0.csv,forum_0_0.csv," +
