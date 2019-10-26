@@ -34,7 +34,6 @@ public class LdbcQuery11Handler implements OperationHandler<LdbcQuery11, JanusGr
         String response = client.execute(queryString);                          // execute query
         ArrayList<HashMap<String, String>> result                               // parse result
                 = httpResponseToResultList(response);
-        System.out.println(response);
         ArrayList<LdbcQuery11Result> endResult                                   // init result list
                 = new ArrayList<>();
         for (int i = 0; i < result.size(); i++) {                               // for each result
