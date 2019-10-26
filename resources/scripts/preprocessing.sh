@@ -13,7 +13,7 @@ if [ "$1" = "${PATH_TO_DATA}/person_email_emailaddress_0_0.csv" ]; then
     header='1s;^;id|email\n;'
     echo "Merging email addresses"
 elif [ "$1" = "${PATH_TO_DATA}/person_speaks_language_0_0.csv" ]; then
-    header='1s;^;id|speaks\n;'
+    header='1s;^;id|language\n;'
     echo "Merging languages"
 else
     echo "Error!"
@@ -21,7 +21,7 @@ else
 fi
 
 # group by id
-sed 1d "$1" | awk -F"|" '{if(a[$1])a[$1]=a[$1]":"$2; else a[$1]=$2;}END{for (i in a) print i "|" a[i];}' | sort -n > ${PATH_TO_DATA}/temp.csv
+sed 1d "$1" | awk -F"|" '{if(a[$1])a[$1]=a[$1]";"$2; else a[$1]=$2;}END{for (i in a) print i "|" a[i];}' | sort -n > ${PATH_TO_DATA}/temp.csv
 # add header
 sed -i ${header} ${PATH_TO_DATA}/temp.csv
 # join with person_0_0.csv on id
