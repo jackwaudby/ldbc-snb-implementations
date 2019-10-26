@@ -1,11 +1,12 @@
 package com.jackwaudby.ldbcimplementations.utils;
 
-import com.jackwaudby.ldbcimplementations.GraphLoader;
+import com.jackwaudby.ldbcimplementations.VertexLoader;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
+import org.fusesource.jansi.internal.Kernel32;
 import org.janusgraph.core.JanusGraph;
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -22,6 +23,8 @@ import static com.jackwaudby.ldbcimplementations.utils.TagClassFix.tagClassFix;
  * This script provides a method for loading vertices.
  */
 public class BulkLoadVertices {
+
+    static int COMMIT = 0;
 
     public static void bulkLoadVertices(String pathToData, JanusGraph graph, GraphTraversalSource g) {
 
@@ -60,7 +63,7 @@ public class BulkLoadVertices {
                     vertexLabel = vertexLabel.substring(0, 1).toUpperCase() + vertexLabel.substring(1);
                     vertexLabel = tagClassFix(vertexLabel);                                 // tag class fix
 
-                    GraphLoader.LOGGER.info("Adding Vertex: (" + vertexLabel + ")");
+                    VertexLoader.LOGGER.info("Adding Vertex: (" + vertexLabel + ")");
 
                     int elementsToAdd = lineCount(child); // number of elements to add
 
@@ -96,7 +99,7 @@ public class BulkLoadVertices {
                                             SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
                                             g.V(v).property(header.get(i), dateTimeFormat.parse(record.get(i))).next();
                                         } else if (setProperties.contains(header.get(i))) { // Set
-                                            String delimiter2 = ";"; // parse string
+                                            String delimiter2 = ";"; // parse string CHECK THIS IS RIGHT either ; or : //TODO change to ; in preprocessing script so consistent across all
                                             String[] setArray = record.get(i).split(delimiter2);
                                             for (String s : setArray) { // add in loop
                                                 g.V(v).property(VertexProperty.Cardinality.list, header.get(i), s).next();
@@ -105,22 +108,32 @@ public class BulkLoadVertices {
                                             g.V(v).property(header.get(i), record.get(i)).next();
                                         }
                                     }
+
+                                    COMMIT = COMMIT + 1;
+
+                                    if (COMMIT == 1000) {
                                     graph.tx().commit(); // commit vertex
+                                        COMMIT = 0;
+//                                        System.out.println("COMMIT BATCH");
+                                    }
                                 } else { // vertex already exists
                                     elementsExist = elementsExist + 1;
                                 }
                             }
-                            GraphLoader.LOGGER.info((elementsAdded + elementsExist) +"/" + elementsToAdd);
+//                            graph.tx().commit();
+                            VertexLoader.LOGGER.info((elementsAdded + elementsExist) +"/" + elementsToAdd);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     } catch (IOException e) {
-                            GraphLoader.LOGGER.error(e);
+                            VertexLoader.LOGGER.error(e);
                     }
+//                    graph.tx().commit(); // commit vertex
                 }
             }
         } else {
-            GraphLoader.LOGGER.error("Supplied path is not a directory");
+            VertexLoader.LOGGER.error("Supplied path is not a directory");
         }
+        graph.tx().commit();
     }
 }

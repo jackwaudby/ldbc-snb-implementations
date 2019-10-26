@@ -1,6 +1,6 @@
 package com.jackwaudby.ldbcimplementations.utils;
 
-import com.jackwaudby.ldbcimplementations.GraphLoader;
+import com.jackwaudby.ldbcimplementations.VertexLoader;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.janusgraph.core.Cardinality;
 import org.janusgraph.core.JanusGraph;
@@ -90,7 +90,7 @@ public class LoadSchemaIndexes {
 
         } catch (
                 SchemaViolationException e) {
-            GraphLoader.LOGGER.error("Schema and Indexes may already be defined: " + e);
+            VertexLoader.LOGGER.error("Schema and Indexes may already be defined: " + e);
         }
     }
 }

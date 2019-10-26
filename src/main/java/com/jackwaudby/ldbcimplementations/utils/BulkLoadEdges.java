@@ -1,6 +1,6 @@
 package com.jackwaudby.ldbcimplementations.utils;
 
-import com.jackwaudby.ldbcimplementations.GraphLoader;
+import com.jackwaudby.ldbcimplementations.VertexLoader;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
@@ -23,6 +23,8 @@ import static com.jackwaudby.ldbcimplementations.utils.TagClassFix.tagClassFix;
  * This script provides a method for loading edges.
  */
 public class BulkLoadEdges {
+
+    static int COMMIT = 0;
 
     public static void bulkLoadEdges(String pathToData, JanusGraph graph, GraphTraversalSource g) {
 
@@ -60,7 +62,7 @@ public class BulkLoadEdges {
                     String edgeLabel = cleanFileName[1];                                        // edge label
                     edgeTail = tagClassFix(edgeTail);                                           // check for tag class fix
                     edgeHead = tagClassFix(edgeHead);                                           // check for tag class fix
-                    GraphLoader.LOGGER.info("Adding Edge: " + "(" + edgeTail + ")-" +
+                    VertexLoader.LOGGER.info("Adding Edge: " + "(" + edgeTail + ")-" +
                             "[:" + edgeLabel + "]->(" + edgeHead + ")");
                     int elementsToAdd = lineCount(file);                                        // elements to add
                     Reader in;                                                                  // read file in
@@ -114,9 +116,16 @@ public class BulkLoadEdges {
                                     }
                             }
 
-                            graph.tx().commit();                                                // commit edges
+                            COMMIT = COMMIT + 1;
 
-                            GraphLoader.LOGGER.info(elementsAdded + "/" + elementsToAdd);
+                            if (COMMIT == 1000) {
+                                graph.tx().commit(); // commit vertex
+                                COMMIT = 0;
+//                                        System.out.println("COMMIT BATCH");
+                            }
+//                            graph.tx().commit();                                                // commit edges
+
+                            VertexLoader.LOGGER.info(elementsAdded + "/" + elementsToAdd);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -126,6 +135,7 @@ public class BulkLoadEdges {
                 }
             }
         }
+        graph.tx().commit();
     }
 }
 
