@@ -24,25 +24,10 @@ public class GraphStats {
 
     public static void elementCount(GraphTraversalSource g){
 
-        Long person = g.V().hasLabel("Person").count().next();
-        Long forum = g.V().hasLabel("Forum").count().next();
-        Long post = g.V().hasLabel("Post").count().next();
-        Long comment = g.V().hasLabel("Comment").count().next();
-        Long likesPost = g.V().hasLabel("Person").outE().hasLabel("likes").inV().hasLabel("Post").count().next();
-        Long hasMember = g.E().hasLabel("hasMember").count().next();
-        Long likesComment = g.V().hasLabel("Person").outE().hasLabel("likes").inV().hasLabel("Comment").count().next();
-        Long knows = g.E().hasLabel("knows").count().next();
+
         Long vertices = g.V().count().next();
         Long edges = g.E().count().next();
 
-        LOGGER.info("(Person): "+ person);
-        LOGGER.info("(Person)-[:likes]->(Post): "+ likesPost);
-        LOGGER.info("(Person)-[:likes]->(Comment): "+ likesComment);
-        LOGGER.info("(Forum): "+ forum);
-        LOGGER.info("(Person)-[:hasMember]->(Forum): "+ hasMember);
-        LOGGER.info("(Post): "+ post);
-        LOGGER.info("(Comment): "+ comment);
-        LOGGER.info("(Person)-[:knows]->(Person): "+ knows);
         LOGGER.info("Total Vertices: "+ vertices);
         LOGGER.info("Total Edges: "+ edges);
 
