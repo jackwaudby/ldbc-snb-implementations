@@ -67,7 +67,7 @@ public class LdbcUpdate1AddPersonHandler implements OperationHandler<LdbcUpdate1
                 "g.V().has('Place', 'id',"+ cityId +").as('city').V(p).addE('isLocatedIn').to('city').next();[];" +
                 "languages="+lang+";[];"+
                 "for (item in languages) { " +
-                " g.V(p).property(list, 'speaks', item).next();[];" +
+                " g.V(p).property(list, 'language', item).next();[];" +
                 "}; "+
                 "email="+em+";[];"+
                 "for (item in email) { " +
