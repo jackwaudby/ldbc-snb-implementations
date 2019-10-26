@@ -18,7 +18,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URI;
@@ -161,6 +160,7 @@ public class JanusGraphDb extends Db {
         // TODO: register operation handlers
         registerOperationHandler(LdbcQuery1.class,LdbcQuery1Handler.class);
         registerOperationHandler(LdbcQuery2.class,LdbcQuery2Handler.class);
+        registerOperationHandler(LdbcQuery3.class,LdbcQuery3Handler.class);
         registerOperationHandler(LdbcQuery4.class,LdbcQuery4Handler.class);
         registerOperationHandler(LdbcQuery6.class,LdbcQuery6Handler.class);
         registerOperationHandler(LdbcQuery7.class,LdbcQuery7Handler.class);
