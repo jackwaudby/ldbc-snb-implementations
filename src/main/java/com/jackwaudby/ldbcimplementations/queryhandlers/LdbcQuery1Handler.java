@@ -40,7 +40,7 @@ public class LdbcQuery1Handler implements OperationHandler<LdbcQuery1, JanusGrap
                 "dedup().has('Person','firstName','"+personFirstName+"')." +
                 "order().by(sack(),asc).by('lastName',asc).by('id',asc).limit("+limit+")" +
                 "local(union(" +
-                "valueMap('lastName','id','email','birthday','creationDate','gender','browserUsed','locationIP','speaks'), " +
+                "valueMap('lastName','id','email','birthday','creationDate','gender','browserUsed','locationIP','language'), " +
                 "out('isLocatedIn').valueMap('name')," +
                 "sack().fold(), " +
                 "outE('workAt').as('workFrom').inV().as('company').out('isLocatedIn').as('country')." +
@@ -67,7 +67,7 @@ public class LdbcQuery1Handler implements OperationHandler<LdbcQuery1, JanusGrap
             if (emailList.size() == 1 && emailList.get(0).equals("")) {
                 emailList = new ArrayList<>();
             }
-            String speaks = getPropertyValue(person.get("speaks"));                             // speaks result
+            String speaks = getPropertyValue(person.get("language"));                             // speaks result
             List<String> speaksList = Arrays.asList(
                     speaks.replaceAll("[\\[\\]\\s+]", "").split(","));
 
