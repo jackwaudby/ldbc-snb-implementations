@@ -24,8 +24,13 @@ This repository contains 2 validation sets. Each sets contains a `social_network
 
 ### Validation Set 1 ###
 
-This validation set was taken from the Neo4j directory in the [`ldbc_interactive_validation` repo](https://github.com/ldbc/ldbc_snb_interactive_validation) 
+This validation set was taken from the Neo4j directory in the [`ldbc_interactive_validation`](https://github.com/ldbc/ldbc_snb_interactive_validation) repo
 
+| Validation Set 1  |            |
+|-------------------|------------------|
+
+
+|                    |        |
 |--------------------|--------|
 | Data Format:       | CSV    |
 | Operations:        | 11929  |
@@ -34,7 +39,6 @@ This validation set was taken from the Neo4j directory in the [`ldbc_interactive
 | Edge Count:        | ~1.11m |
 | Vertex Load Time:  | 75s    |
 | Edge Load Time:    | 496s   |
-|--------------------|--------|
 
 Passing Validation:
 + Short Reads 7/7
@@ -58,6 +62,7 @@ Issue: expected result seems to be ordered descending by `totalCount` and then `
 
 This validation set was generated using the [Cypher implementation repository](https://github.com/ldbc/ldbc_snb_implementations). 
 
+|                   |              |
 |-------------------|--------------|
 | Data Format:      | CSVComposite |
 | Operations:       | 1321         |
@@ -66,7 +71,7 @@ This validation set was generated using the [Cypher implementation repository](h
 | Edge Count:       | ~1.09m       |
 | Vertex Load Time: | 74s          |
 | Edge Load Time:   | 793s         |
-|-------------------|--------------|
+
 
 Passing Validation:
 + Short Reads 7/7
