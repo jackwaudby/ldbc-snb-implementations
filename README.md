@@ -26,11 +26,7 @@ This repository contains 2 validation sets. Each sets contains a `social_network
 
 This validation set was taken from the Neo4j directory in the [`ldbc_interactive_validation`](https://github.com/ldbc/ldbc_snb_interactive_validation) repo
 
-| Validation Set 1  |            |
-|-------------------|------------------|
-
-
-|                    |        |
+|   Validation Set 1 |        |
 |--------------------|--------|
 | Data Format:       | CSV    |
 | Operations:        | 11929  |
@@ -62,7 +58,7 @@ Issue: expected result seems to be ordered descending by `totalCount` and then `
 
 This validation set was generated using the [Cypher implementation repository](https://github.com/ldbc/ldbc_snb_implementations). 
 
-|                   |              |
+|  Validation Set 2 |              |
 |-------------------|--------------|
 | Data Format:      | CSVComposite |
 | Operations:       | 1321         |
@@ -90,7 +86,7 @@ Missing handler implementations for 5 operation types
 | LdbcQuery1 | 1                |
 
 
-Issues: expected answer is including start person and it should not (see Complex Read 1 in  [specification](https://ldbc.github.io/ldbc_snb_docs/ldbc-snb-specification.pdf)). 
+Issue: expected answer is including start person and it should not (see Complex Read 1 in  [specification](https://ldbc.github.io/ldbc_snb_docs/ldbc-snb-specification.pdf)). 
 
 
 
