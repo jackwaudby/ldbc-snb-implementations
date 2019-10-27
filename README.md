@@ -71,15 +71,14 @@ This validation set was generated using the [Cypher implementation repository](h
 
 Passing Validation:
 + Short Reads 7/7
-+ Complex Reads 9/14
++ Complex Reads 10/14
 + Updates 8/8
 
-Missing handler implementations for 5 operation types
+Missing handler implementations for 4 operation types
 + LdbcQuery10
 + LdbcQuery12
 + LdbcQuery13
 + LdbcQuery14
-+ LdbcQuery5
 
 | Operation  | Incorrect Result |
 |------------|------------------|
