@@ -50,14 +50,13 @@ public class LdbcQuery12Handler implements OperationHandler<LdbcQuery12, JanusGr
                 "    by(local(__.in('hasCreator')." +
                 "      where(out('replyOf').hasLabel('Post').out('hasTag').out('hasType').has('name','"+tagClassName+"'))." +
                 "      out('replyOf').out('hasTag').count()),desc)." +
-                "    by('id',asc)." +
                 "  local(union(" +
                 "    __.in('hasCreator').out('replyOf').hasLabel('Post').out('hasTag')." +
                 "      where(out('hasType').has('name','"+tagClassName+"'))." +
                 "      count().fold()," +
                 "    valueMap('id','firstName','lastName').unfold(),"+
                 "    __.in('hasCreator').out('replyOf').hasLabel('Post').out('hasTag')." +
-                "      where(out('hasType').has('name','"+tagClassName+"'))."+
+                "      where(out('hasType').has('name','"+tagClassName+"')).dedup()."+
                 "      values('name').fold()" +
                 "  ).fold())" +
                 "\"" +
