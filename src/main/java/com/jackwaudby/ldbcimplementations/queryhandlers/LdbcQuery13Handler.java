@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.jackwaudby.ldbcimplementations.utils.GremlinResponseParsers.getPropertyValue;
 import static com.jackwaudby.ldbcimplementations.utils.GremlinResponseParsers.gremlinResponseToResultArrayList;
 
 /**
@@ -30,59 +31,29 @@ public class LdbcQuery13Handler implements OperationHandler<LdbcQuery13, JanusGr
         long person1Id = operation.person1Id();
         long person2Id = operation.person2Id();
 
-
-//        long startTime = System.nanoTime();
         JanusGraphDb.JanusGraphClient client = dbConnectionState.getClient();   // janusgraph client
 
         String queryString = "{\"gremlin\": \"" +                               // gremlin query string
                 "g.V().has('Person','id',"+person1Id+")." +
                 "choose(" +
-                "repeat(both().dedup()).until(has('Person','id',"+person2Id+")).limit(1).path().count(local).is(gt(0))," +
-                "repeat(store('x').both().where(without('x')).aggregate('x')).until(has('Person','id',"+person2Id+")).limit(1).path().count(local)," +
-                "constant(-1))" +
-//                "g.V().has('Person','id',"+person1Id+")." +
-//                "choose(repeat(both().dedup()).until(has('Person','id',"+person2Id+")).limit(1).path().count(local).is(gt(0))," +
-//                "repeat(store('x').both().where(without('x')).aggregate('x')).until(has('Person','id',"+person2Id+")).limit(1).path().count(local)," +
-//                "constant(-1))" +
+                "repeat(both('knows').dedup()).until(has('Person','id',"+person2Id+")).limit(1).path().count(local).is(gt(0))," +
+                "repeat(store('x').both('knows').where(without('x')).aggregate('x')).until(has('Person','id',"+person2Id+")).limit(1).path().count(local)," +
+                "constant(-1)).fold()" +
                 "\"" +
                 "}";
         String response = client.execute(queryString);                          // execute query
         ArrayList<JSONObject> resultList = gremlinResponseToResultArrayList(response);
-//        long endTime = System.nanoTime();
-//        long duration = (endTime - startTime);
-//        System.out.println("Execution Time: " + (duration/1000000));
-
+        Integer shortestPathLength = Integer.parseInt(getPropertyValue(resultList.get(0)));
+        if (shortestPathLength != - 1 ){
+            shortestPathLength = shortestPathLength - 1;
+        }
                                                         // for each result
-            LdbcQuery13Result endResult                                                // create result object
+        LdbcQuery13Result endResult                                                // create result object
                     = new LdbcQuery13Result(
-                    resultList.get(0).getInt("@value")
+                            shortestPathLength
             );
         resultReporter.report(0, endResult, operation);
 
 
     }
 }
-
-// person1: 4398046514041
-// person2: 5497558139286
-// path length: 4
-
-// 5497558138913
-// 3298534884724
-// -1
-
-//4398046512278,2582
-
-//    clockWithResult(1) {
-// g.V().has('Person','id',4398046512278).
-// choose(
-// repeat(both().dedup()).until(has('Person','id',2582)).limit(1).path().count(local).is(gt(0)),
-// repeat(store('x').both().where(without('x')).aggregate('x')).until(has('Person','id',2582)).limit(1).path().count(local),
-// constant(-1)
-// ).fold().next()
-//    }
-
-
-//    clockWithResult(1) { g.V().has('Person','id',4398046514041).repeat(both().simplePath()).until(has('Person','id',5497558139286)).limit(1).path().count(local).next()}
-//    clockWithResult(1) { g.V().has('Person','id',4398046514041).repeat(both().dedup()).until(has('Person','id',5497558139286)).limit(1).path().count(local).next()}
-//    clockWithResult(1) { g.V().has('Person','id',4398046514041).store('x').repeat(both().where(without('x')).aggregate('x')).until(has('Person','id',5497558139286)).limit(1).path().count(local).next()}

@@ -71,20 +71,21 @@ This validation set was generated using the [Cypher implementation repository](h
 
 Passing Validation:
 + Short Reads 7/7
-+ Complex Reads 11/14
++ Complex Reads 12/14
 + Updates 8/8
 
-Missing handler implementations for 3 operation types
+Missing handler implementations for 2 operation types
 + LdbcQuery10
-+ LdbcQuery13
 + LdbcQuery14
 
 | Operation  | Incorrect Result |
 |------------|------------------|
-| LdbcQuery1 | 1                |
+| `LdbcQuery1` | 1              |
 
 
-Issue: expected answer is including start person and it should not (see Complex Read 1 in  [specification](https://ldbc.github.io/ldbc_snb_docs/ldbc-snb-specification.pdf)). 
+
+Issues: 
++ Validation's expected answer for `LdbcQuery1` is including the start person which it should not (see Complex Read 1 in [specification](https://ldbc.github.io/ldbc_snb_docs/ldbc-snb-specification.pdf)). This could imply a problem with the Cypher query used to generate the validation set.
 
 
 
