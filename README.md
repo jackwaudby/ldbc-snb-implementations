@@ -38,21 +38,22 @@ This validation set was taken from the Neo4j directory in the [`ldbc_interactive
 
 Passing Validation:
 + Short Reads 7/7
-+ Complex Reads 9/14
++ Complex Reads 11/14
 + Updates 8/8
 
 Missing handler implementations for 5 operation types
 + LdbcQuery10
 + LdbcQuery12
-+ LdbcQuery13
 + LdbcQuery14
-+ LdbcQuery5
 
 | Operation  | Incorrect Result |
 |------------|------------------|
 | LdbcQuery3 | 1                |
+| LdbcQuery12 | 5                |
 
-Issue: expected result seems to be ordered descending by `totalCount` and then `personId` (ascending). My implementation of `LdbcQuery3` orders by `countX` (descending) then `personId` (ascending) as per the [specification](https://ldbc.github.io/ldbc_snb_docs/ldbc-snb-specification.pdf).
+Issue: 
++ Expected result seems to be ordered descending by `totalCount` and then `personId` (ascending). My implementation of `LdbcQuery3` orders by `countX` (descending) then `personId` (ascending) as per the [specification](https://ldbc.github.io/ldbc_snb_docs/ldbc-snb-specification.pdf).
++ My `LdbcQuery12` is not ordering by `personId`.
 
 ### Validation Set 2 ###
 
