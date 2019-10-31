@@ -12,6 +12,10 @@ import java.util.HashMap;
 
 import static com.jackwaudby.ldbcimplementations.utils.HttpResponseToResultList.httpResponseToResultList;
 
+/**
+ * Given a start Person, find that Person’s friends and friends of friends (excluding start Person)
+ * who started Working in some Company in a given Country, before a given date (year).
+ */
 public class LdbcQuery11Handler implements OperationHandler<LdbcQuery11, JanusGraphDb.JanusGraphConnectionState> {
 
     @Override
@@ -27,8 +31,18 @@ public class LdbcQuery11Handler implements OperationHandler<LdbcQuery11, JanusGr
         JanusGraphDb.JanusGraphClient client = dbConnectionState.getClient();   // janusgraph client
 
         String queryString = "{\"gremlin\": \"" +                               // gremlin query string
-                "g.V().has('Person','id',"+personId+").repeat(both('knows').simplePath()).emit().times(2).dedup().as('person').outE('workAt').has('workFrom',lt("+workFromYear+")).as('organisationYear').inV().as('organisation').out('isLocatedIn').has('name','"+countryName+"').order().by(select('organisationYear').by('workFrom')).by(select('person').by('id')).by(select('organisation').by('name'),desc).select('person','organisation','organisationYear').by(valueMap('id','firstName','lastName')).by(valueMap('name')).by(valueMap('workFrom'))" +
-//                "g.V().has('Person','id',3298534883684).repeat(both('knows').simplePath()).emit().times(2).dedup().as('person').outE('workAt').has('workFrom',lt(2011)).as('organisationYear').inV().as('organisation').out('isLocatedIn').has('name','Estonia').order().by(select('organisationYear').by('workFrom')).by(select('person').by('id')).by(select('organisation').by('name'),desc).select('person','organisation','organisationYear').by(valueMap('id','firstName','lastName')).by(valueMap('name')).by(valueMap('workFrom')).toList()"+
+                "g.V().has('Person','id',"+personId+")." +
+                "repeat(both('knows').simplePath()).emit().times(2).dedup().as('person')." +
+                "outE('workAt').has('workFrom',lt("+workFromYear+")).as('organisationYear')." +
+                "inV().as('organisation')." +
+                "out('isLocatedIn').has('name','"+countryName+"')." +
+                "order()." +
+                    "by(select('organisationYear').by('workFrom'))." +
+                    "by(select('person').by('id'))." +
+                    "by(select('organisation').by('name'),desc)." +
+                "select('person','organisation','organisationYear')." +
+                    "by(valueMap('id','firstName','lastName'))." +
+                    "by(valueMap('name')).by(valueMap('workFrom'))" +
                 "\"" +
                 "}";
         String response = client.execute(queryString);                          // execute query
