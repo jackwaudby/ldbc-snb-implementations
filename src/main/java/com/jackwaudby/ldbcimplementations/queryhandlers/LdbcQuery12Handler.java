@@ -61,11 +61,8 @@ public class LdbcQuery12Handler implements OperationHandler<LdbcQuery12, JanusGr
                 "  ).fold())" +
                 "\"" +
                 "}";
-//    g.V().has('Person','id',8796093023661).both('knows').where(local(__.in('hasCreator').where(out('replyOf').hasLabel('Post').out('hasTag').out('hasType').has('name','AmericanFootballPlayer')).out('replyOf').out('hasTag').count().is(gt(0)))).local(union(__.in('hasCreator').out('replyOf').hasLabel('Post').out('hasTag').where(out('hasType').has('name','AmericanFootballPlayer')).count().fold(),valueMap('id','firstName','lastName').unfold(),__.in('hasCreator').out('replyOf').hasLabel('Post').out('hasTag').where(out('hasType').has('name','AmericanFootballPlayer')).values('name').fold()).fold())
 
         String response = client.execute(queryString);                          // execute query
-        ArrayList<JSONObject> resultList = gremlinResponseToResultArrayList(response);
-
         ArrayList<LdbcQuery12Result> endResult                                   // init result list
                 = new ArrayList<>();
         ArrayList<JSONObject> results = gremlinResponseToResultArrayList(response);
