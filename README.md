@@ -72,20 +72,22 @@ This validation set was generated using the [Cypher implementation repository](h
 
 Passing Validation:
 + Short Reads 7/7
-+ Complex Reads 13/14
++ Complex Reads 12/14
 + Updates 8/8
 
-Missing handler implementations for 2 operation type(s)
-+ LdbcQuery14
+Missing handler implementations for 0 operation type(s)
 
-| Operation  | Incorrect Result |
-|------------|------------------|
-| `LdbcQuery1` | 1              |
+
+| Operation    | Incorrect Result |
+|--------------|------------------|
+| `LdbcQuery1` | 1                |
+| `LdbcQuery14`| 1                |
 
 
 
 Issues: 
 + Validation's expected answer for `LdbcQuery1` is including the start person which it should not (see Complex Read 1 in [specification](https://ldbc.github.io/ldbc_snb_docs/ldbc-snb-specification.pdf)). This could imply a problem with the Cypher query used to generate the validation set.
++ Implementation of `LdbcQuery14` does not handle the case when there are multiple shortest paths. 
 
 
 
