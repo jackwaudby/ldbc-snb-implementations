@@ -42,14 +42,13 @@ Passing Validation:
 + Updates 8/8
 
 Missing handler implementations for 5 operation types
-+ LdbcQuery10
-+ LdbcQuery12
 + LdbcQuery14
 
 | Operation  | Incorrect Result |
 |------------|------------------|
 | LdbcQuery3 | 1                |
-| LdbcQuery12 | 5                |
+| LdbcQuery10| 2                |
+| LdbcQuery12| 5                |
 
 Issue: 
 + Expected result seems to be ordered descending by `totalCount` and then `personId` (ascending). My implementation of `LdbcQuery3` orders by `countX` (descending) then `personId` (ascending) as per the [specification](https://ldbc.github.io/ldbc_snb_docs/ldbc-snb-specification.pdf).
