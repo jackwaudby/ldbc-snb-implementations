@@ -41,7 +41,7 @@ Passing Validation:
 + Complex Reads 11/14
 + Updates 8/8
 
-Missing handler implementations for 5 operation types
+Missing handler implementations for 1 operation type(s)
 + LdbcQuery14
 
 | Operation  | Incorrect Result |
@@ -53,6 +53,7 @@ Missing handler implementations for 5 operation types
 Issue: 
 + Expected result seems to be ordered descending by `totalCount` and then `personId` (ascending). My implementation of `LdbcQuery3` orders by `countX` (descending) then `personId` (ascending) as per the [specification](https://ldbc.github.io/ldbc_snb_docs/ldbc-snb-specification.pdf).
 + My `LdbcQuery12` is not ordering by `personId`.
++ My `LdbcQuery10` is producing results that do not exist in the expected answer.
 
 ### Validation Set 2 ###
 
@@ -74,7 +75,7 @@ Passing Validation:
 + Complex Reads 12/14
 + Updates 8/8
 
-Missing handler implementations for 2 operation types
+Missing handler implementations for 2 operation type(s)
 + LdbcQuery10
 + LdbcQuery14
 
