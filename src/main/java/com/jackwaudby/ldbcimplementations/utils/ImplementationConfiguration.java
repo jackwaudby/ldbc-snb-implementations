@@ -7,14 +7,14 @@ import java.util.Properties;
 /**
  * Reads in configuration properties
  */
-public class ImplementationConfiguration {
+public final class ImplementationConfiguration {
 
-    private Properties implementationProperties = new Properties();
+    private static Properties implementationProperties = new Properties();
 
     /**
      * Load in properties file.
      */
-    public ImplementationConfiguration() {
+    private ImplementationConfiguration() {
         try {
             String configurationPath = "implementation-configuration.properties";
             implementationProperties.load(new FileInputStream(configurationPath));
@@ -27,7 +27,15 @@ public class ImplementationConfiguration {
      * Get transaction retry attempts.
      * @return transaction attempts
      */
-    public Integer getTxnAttempts() {
+    public static Integer getTxnAttempts() {
         return Integer.parseInt(implementationProperties.getProperty("txn.attempts"));
+    }
+
+    /**
+     * Get JanusGraph url
+     * @return JanusGraph Server url
+     */
+    public static String getUrl(){
+        return implementationProperties.getProperty("url");
     }
 }
