@@ -1,7 +1,9 @@
 package com.jackwaudby.ldbcimplementations.utils;
 
+import org.apache.commons.configuration.Configuration;
+
 import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 /**
@@ -9,19 +11,21 @@ import java.util.Properties;
  */
 public class ImplementationConfiguration {
 
-    private static Properties implementationProperties;
+    private static org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(ImplementationConfiguration.class.getName());
+
+    private static Properties implementationProperties = new Properties();
 
 
-    static{
+    static {
         try {
-            implementationProperties = new Properties();
-            String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
-            String configurationPath = rootPath + "implementation-configuration.properties";
-            implementationProperties.load(new FileInputStream(configurationPath));
-        } catch (IOException e) {
+            InputStream in = Configuration.class.getResourceAsStream("/implementation-configuration.properties");
+            implementationProperties.load(in);
+        } catch (Exception e) {
+            LOGGER.error(e);
             e.printStackTrace();
         }
     }
+
 
 
     /**
