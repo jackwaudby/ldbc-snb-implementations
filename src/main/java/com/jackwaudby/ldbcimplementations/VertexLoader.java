@@ -9,7 +9,7 @@ import static com.jackwaudby.ldbcimplementations.utils.CloseGraph.closeGraph;
 
 
 /**
- * This script creates embedded connection with JanusGraph and loads schema, indexes and data.
+ * This script creates embedded connection with JanusGraph and loads vertices.
  */
 public class VertexLoader {
 
