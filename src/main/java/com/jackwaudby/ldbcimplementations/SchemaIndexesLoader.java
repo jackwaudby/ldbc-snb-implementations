@@ -1,4 +1,4 @@
-package com.jackwaudby.ldbcimplementations.utils;
+package com.jackwaudby.ldbcimplementations;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.janusgraph.core.JanusGraph;
@@ -9,6 +9,9 @@ import org.apache.log4j.Logger;
 import static com.jackwaudby.ldbcimplementations.utils.CloseGraph.closeGraph;
 import static com.jackwaudby.ldbcimplementations.utils.LoadSchemaIndexes.loadSchemaIndexes;
 
+/**
+ * This script creates embedded connection with JanusGraph and loads schema and indexes.
+ */
 public class SchemaIndexesLoader {
 
     public static final Logger LOGGER = Logger.getLogger(SchemaIndexesLoader.class);
