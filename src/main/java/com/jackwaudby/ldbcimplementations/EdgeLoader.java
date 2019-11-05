@@ -21,7 +21,7 @@ public class EdgeLoader {
         LOGGER.info("$JANUSGRAPH_HOME: " + janusGraphHome);
         LOGGER.info("$LDBC_SNB_DATAGEN_HOME: " + ldbcSnbDatagenHome);
         JanusGraph graph = JanusGraphFactory.open(janusGraphHome
-                + "/conf/janusgraph-berkeleyje-bulk.properties");                        // open connection to JanusGraph
+                + "/conf/janusgraph-berkeleyje.properties");                        // open connection to JanusGraph
         GraphTraversalSource g = graph.traversal();                                 // create traversal source
         String pathToData = ldbcSnbDatagenHome + "/social_network/";                // path to data
         bulkLoadEdges(pathToData,graph,g);                                          // load edges

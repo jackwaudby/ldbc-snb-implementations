@@ -29,7 +29,7 @@ public class CompleteLoader {
 
 
         JanusGraph graph = JanusGraphFactory.open(janusGraphHome
-                + "/conf/janusgraph-berkeleyje-bulk.properties");                        // open connection to JanusGraph
+                + "/conf/janusgraph-berkeleyje.properties");                        // open connection to JanusGraph
 
         GraphTraversalSource g = graph.traversal();                                 // create traversal source
         loadSchemaIndexes(graph);                                                   // load schema
