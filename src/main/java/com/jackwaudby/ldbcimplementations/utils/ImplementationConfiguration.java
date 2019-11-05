@@ -7,21 +7,22 @@ import java.util.Properties;
 /**
  * Reads in configuration properties
  */
-public final class ImplementationConfiguration {
+public class ImplementationConfiguration {
 
-    private static Properties implementationProperties = new Properties();
+    private static Properties implementationProperties;
 
-    /**
-     * Load in properties file.
-     */
-    private ImplementationConfiguration() {
+
+    static{
         try {
-            String configurationPath = "implementation-configuration.properties";
+            implementationProperties = new Properties();
+            String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+            String configurationPath = rootPath + "implementation-configuration.properties";
             implementationProperties.load(new FileInputStream(configurationPath));
         } catch (IOException e) {
-            e.printStackTrace(); // TODO: Add error to logger
+            e.printStackTrace();
         }
     }
+
 
     /**
      * Get transaction retry attempts.
