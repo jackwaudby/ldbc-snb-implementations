@@ -64,7 +64,7 @@ public class LdbcShortQuery2PersonPostsHandler implements OperationHandler<LdbcS
         int TX_RETRIES = getTxnAttempts();
 
         while (TX_ATTEMPTS < TX_RETRIES) {
-            LOGGER.info("Attempt " + (TX_ATTEMPTS + 1) + ": " + LdbcShortQuery1PersonProfileHandler.class.getSimpleName());
+            LOGGER.info("Attempt " + (TX_ATTEMPTS + 1) + ": " + LdbcShortQuery2PersonPostsHandler.class.getSimpleName());
             String response = client.execute(queryString);                                            // execute query
             ArrayList<JSONObject> results = gremlinResponseToResultArrayList(response);          // get result list
             if (gremlinMapToHashMap(results.get(0)).containsKey("error")) {
@@ -111,32 +111,5 @@ public class LdbcShortQuery2PersonPostsHandler implements OperationHandler<LdbcS
                 break;
             }
         }
-
-
-//        ArrayList<HashMap<String, String>> result                               // parse result
-//                = httpResponseToResultList(response);
-//        ArrayList<LdbcShortQuery2PersonPostsResult> endResult                   // init result list
-//                = new ArrayList<>();
-//        for (int i = 0; i < result.size(); i++) {                               // for each result
-//            String messageContent;                                              // set message content
-//            if (result.get(i).get("messageContent").equals("")) {                      // imagefile
-//                messageContent = result.get(i).get("messageImageFile");
-//            } else {                                                            // content
-//                messageContent = result.get(i).get("messageContent");
-//            }
-//        LdbcShortQuery2PersonPostsResult res                                    // create result object
-//                = new LdbcShortQuery2PersonPostsResult(
-//                        Long.parseLong(result.get(i).get("messageId")),
-//                        messageContent,
-//                        Long.parseLong(result.get(i).get("messageCreationDate")),
-//                        Long.parseLong(result.get(i).get("originalPostId")),
-//                        Long.parseLong(result.get(i).get("originalAuthorId")),
-//                        result.get(i).get("originalAuthorFirstName"),
-//                        result.get(i).get("originalAuthorLastName")
-//        );
-//            endResult.add(res);                                                 // add to result list
-//        }
-//        resultReporter.report(0, endResult, operation);              // pass to result reporter
-
     }
 }
