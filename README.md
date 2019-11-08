@@ -38,7 +38,7 @@ Assuming JanusGraph is installed:
 N.B. Starting JanusGraph console (used for testing): 
 ```
 bin/gremlin.sh
-graph = JanusGraphFactory.open('conf/janusgraph-berkeleyje.properties')
+graph = JanusGraphFactory.open('conf/janusgraph-berkeleyje-test.properties')
 g = graph.traversal()
 ```
 
