@@ -7,5 +7,6 @@ resources/conf/
 *.iml
 src/test/*
 src/main/java/com.jackwaudby.ldbcimplementations/clients/*
-*.log
+**log**
 QueryTestBed.java
+**Runnable.java
