@@ -29,10 +29,10 @@ Assuming JanusGraph is installed:
 1. Delete existing database using `delete-db.sh`
 2. Load chosen validation set in DATAGEN home directory (this is where the loader looks for the data) using `choose-validation.sh <1 or 2>`
 3. Validation set 1 requires preprocessing using `preprocessing.sh`
-4. Load schema, indexes, vertices and edges 
-5. Start JanusGraph Server: `bin/gremlin-server.sh conf/gremlin-server/gremlin-server-berkeleyje.yaml`
+4. Load schema, indexes, vertices and edges using `complete-loader.sh`
+5. Start JanusGraph Server: `start-gremlin-server.sh`
 6. Set driver configuration for validation in `interactive-validate.properties`
-7. Run validation:`java -cp "target/janusgraph-1.0-SNAPSHOT.jar:target/dependencies/*" com.ldbc.driver.Client -P validation/interactive-validate.properties`
+7. Run validation:`run-validation.sh`
 
 
 N.B. Starting JanusGraph console (used for testing): 
