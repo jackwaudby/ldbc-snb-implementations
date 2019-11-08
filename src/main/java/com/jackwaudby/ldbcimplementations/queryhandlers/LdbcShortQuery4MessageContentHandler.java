@@ -1,25 +1,26 @@
 package com.jackwaudby.ldbcimplementations.queryhandlers;
 
 import com.jackwaudby.ldbcimplementations.JanusGraphDb;
-import com.jackwaudby.ldbcimplementations.utils.HttpResponseToResultMap;
 import com.ldbc.driver.DbException;
 import com.ldbc.driver.OperationHandler;
 import com.ldbc.driver.ResultReporter;
 import com.ldbc.driver.workloads.ldbc.snb.interactive.LdbcShortQuery4MessageContent;
 import com.ldbc.driver.workloads.ldbc.snb.interactive.LdbcShortQuery4MessageContentResult;
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.util.HashMap;
+import java.util.ArrayList;
 
-import static com.jackwaudby.ldbcimplementations.utils.HttpResponseToResultMap.httpResponseToResultMap;
+import static com.jackwaudby.ldbcimplementations.utils.GremlinResponseParsers.*;
+import static com.jackwaudby.ldbcimplementations.utils.ImplementationConfiguration.getTxnAttempts;
 
 /**
- * Given a Message, retrieve its content and creation date.
+ * Given a Message ID, retrieve its content or imagefile and creation date.
  */
 public class LdbcShortQuery4MessageContentHandler implements OperationHandler<LdbcShortQuery4MessageContent,JanusGraphDb.JanusGraphConnectionState> {
 
-    //TODO: Add transaction and retry logic
+    private static Logger LOGGER = Logger.getLogger(LdbcShortQuery4MessageContentHandler.class.getName());
+
 
     @Override
     public void executeOperation(LdbcShortQuery4MessageContent operation, JanusGraphDb.JanusGraphConnectionState dbConnectionState, ResultReporter resultReporter) throws DbException {
@@ -30,48 +31,59 @@ public class LdbcShortQuery4MessageContentHandler implements OperationHandler<Ld
         JanusGraphDb.JanusGraphClient client = dbConnectionState.getClient();
         // gremlin query string
         String queryString = "{\"gremlin\": \"" +
-                "try {" +
-                "v = g.V().has('Comment','id', " + messageId + ").fold()" +
-                ".coalesce(unfold(),V().has('Post','id'," + messageId + "))" +
-                ".valueMap('creationDate','content','imageFile').next();[];" +
-                "graph.tx().commit();[];" +
-                "} catch (Exception e) {" +
+                "graph.tx().rollback();[];" +
+                "try{" +
+                "result = g.V().has('Comment','id', "+messageId+").fold()" +
+                ".coalesce(unfold(),V().has('Post','id',"+messageId+"))" +
+                ".valueMap('creationDate','content','imageFile').toList();[];" +
+                "graph.tx().commit();[];"+
+                "} catch (Exception e) {"+
                 "errorMessage =[e.toString()];[];" +
-                "v=[query_error:errorMessage];[];" +
+                "result=[error:errorMessage];" +
                 "graph.tx().rollback();[];" +
                 "};" +
-                "v;" +
+                "result" +
                 "\"" +
                 "}";
 
 
         int TX_ATTEMPTS = 0;
-        int TX_RETRIES = 5;
-        LdbcShortQuery4MessageContentResult endResult = null;
+        int TX_RETRIES = getTxnAttempts();
+
         while (TX_ATTEMPTS < TX_RETRIES) {
-            System.out.println("Attempt " + (TX_ATTEMPTS + 1));
-            String response = client.execute(queryString);                                // get response as string
-            HashMap<String, String> result = httpResponseToResultMap(response);      // convert to result map
-            if (result.containsKey("query_error")) {
+            LOGGER.info("Attempt " + (TX_ATTEMPTS + 1) + ": " + LdbcShortQuery4MessageContentHandler.class.getSimpleName());
+            String response = client.execute(queryString);                                          // execute query
+            ArrayList<JSONObject> results = gremlinResponseToResultArrayList(response);             // get result list
+            if (gremlinMapToHashMap(results.get(0)).containsKey("error")) {
+
+                LOGGER.error(getPropertyValue(gremlinMapToHashMap(results.get(0)).get("error")));
                 TX_ATTEMPTS = TX_ATTEMPTS + 1;
-                System.out.println("Query Error: " + result.get("query_error"));
-                System.out.println("Message ID: " + messageId);
-            } else if (result.containsKey("http_error")) {
-                TX_ATTEMPTS = TX_ATTEMPTS + 1;
-                System.out.println("Gremlin Server Error: " + result.get("http_error"));
+
             } else {
-                if (result.get("content").equals("")) {
-                    endResult = new LdbcShortQuery4MessageContentResult(
-                            result.get("imageFile"),
-                            Long.parseLong(result.get("creationDate")));
+
+                long creationDate =
+                        Long.parseLong(getPropertyValue(gremlinMapToHashMap(results.get(0)).get("creationDate")));
+                String messageContent;
+                if (gremlinMapToHashMap(results.get(0)).containsKey("imageFile") &&
+                        !getPropertyValue(gremlinMapToHashMap(results.get(0)).get("imageFile")).equals("")) {
+
+                    messageContent = getPropertyValue(gremlinMapToHashMap(results.get(0)).get("imageFile"));
+
                 } else {
-                    endResult = new LdbcShortQuery4MessageContentResult(
-                            result.get("content"),
-                            Long.parseLong(result.get("creationDate")));
+
+                    messageContent = getPropertyValue(gremlinMapToHashMap(results.get(0)).get("content"));
+
                 }
+
+                LdbcShortQuery4MessageContentResult queryResult = new LdbcShortQuery4MessageContentResult(
+                        messageContent,
+                        creationDate
+                );
+
+                resultReporter.report(0, queryResult,operation);
                 break;
             }
         }
-        resultReporter.report(0, endResult, operation);
+
     }
 }
