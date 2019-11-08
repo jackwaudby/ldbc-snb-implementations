@@ -1,45 +1,90 @@
 package com.jackwaudby.ldbcimplementations.queryhandlers;
 
 import com.jackwaudby.ldbcimplementations.JanusGraphDb;
+import com.jackwaudby.ldbcimplementations.QueryTestBed;
 import com.ldbc.driver.DbException;
 import com.ldbc.driver.OperationHandler;
 import com.ldbc.driver.ResultReporter;
 import com.ldbc.driver.workloads.ldbc.snb.interactive.LdbcShortQuery6MessageForum;
 import com.ldbc.driver.workloads.ldbc.snb.interactive.LdbcShortQuery6MessageForumResult;
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-import static com.jackwaudby.ldbcimplementations.utils.HttpResponseToResultList.httpResponseToResultList;
+import static com.jackwaudby.ldbcimplementations.utils.GremlinResponseParsers.*;
+import static com.jackwaudby.ldbcimplementations.utils.ImplementationConfiguration.getTxnAttempts;
 
 /**
- * Given a Message ID, retrieve the Forum ID and title that contains it and
+ * Given a Message ID, retrieve the Forum that contains it (ID and title) and
  * retrieve the ID, firstName and lastName of the Person that moderates the Forum.
  */
 public class LdbcShortQuery6MessageForumHandler implements OperationHandler<LdbcShortQuery6MessageForum, JanusGraphDb.JanusGraphConnectionState> {
 
+    private static Logger LOGGER = Logger.getLogger(LdbcShortQuery6MessageForumHandler.class.getName());
+
+
     @Override
     public void executeOperation(LdbcShortQuery6MessageForum operation, JanusGraphDb.JanusGraphConnectionState dbConnectionState, ResultReporter resultReporter) throws DbException {
 
-        // TODO: Add transaction logic to query string
-        // TODO: Add transaction retry logic to response
         long messageId = operation.messageId();
         JanusGraphDb.JanusGraphClient client = dbConnectionState.getClient();   // janusgraph client
-        String queryString = "{\"gremlin\": \"" +                               // gremlin query string
-                "g.V().has('Post','id',"+messageId+").fold().coalesce(unfold(),V().has('Comment','id',"+messageId+").repeat(out('replyOf').simplePath()).until(hasLabel('Post'))).in('containerOf').as('forum').out('hasModerator').as('moderator').select('forum','moderator').by(valueMap('id','title')).by(valueMap('id','firstName','lastName'))" +
+        String queryString = "{\"gremlin\": \"" +
+                "graph.tx().rollback();[];" +
+                "try{" +
+                "result=g.V().has('Post','id',"+messageId+").fold()." +
+                "coalesce(unfold(),V().has('Comment','id',"+messageId+")." +
+                "repeat(out('replyOf').simplePath()).until(hasLabel('Post')))." +
+                "in('containerOf').as('forum').out('hasModerator').as('moderator')." +
+                "select('forum','moderator')." +
+                "by(valueMap('id','title'))." +
+                "by(valueMap('id','firstName','lastName')).toList();[];" +
+                "graph.tx().commit();[];"+
+                "} catch (Exception e) {"+
+                "errorMessage =[e.toString()];[];" +
+                "result=[error:errorMessage];" +
+                "graph.tx().rollback();[];" +
+                "};" +
+                "result" +
                 "\"" +
                 "}";
-        String response = client.execute(queryString);                          // execute query
-        ArrayList<HashMap<String, String>> result                               // parse result
-                = httpResponseToResultList(response);
 
-        LdbcShortQuery6MessageForumResult endResult = new LdbcShortQuery6MessageForumResult(
-                Long.parseLong(result.get(0).get("forumId")),
-                result.get(0).get("forumTitle"),
-                Long.parseLong(result.get(0).get("moderatorId")),
-                result.get(0).get("moderatorFirstName"),
-                result.get(0).get("moderatorLastName")
+        int TX_ATTEMPTS = 0;                                                                 // init. transaction attempts
+        int TX_RETRIES = getTxnAttempts();
+
+        while (TX_ATTEMPTS < TX_RETRIES) {
+            LOGGER.info("Attempt " + (TX_ATTEMPTS + 1) + ": " + QueryTestBed.class.getSimpleName());
+            String response = client.execute(queryString);                                            // execute query
+            ArrayList<JSONObject> results = gremlinResponseToResultArrayList(response);          // get result list
+            if (gremlinMapToHashMap(results.get(0)).containsKey("error")) {
+                LOGGER.error(getPropertyValue(gremlinMapToHashMap(results.get(0)).get("error")));
+                TX_ATTEMPTS = TX_ATTEMPTS + 1;
+            } else {
+
+                JSONObject forum = gremlinMapToHashMap(results.get(0)).get("forum");
+                long forumId = Long.parseLong(getPropertyValue(gremlinMapToHashMap(forum).get("id")));
+                String forumTitle = getPropertyValue(gremlinMapToHashMap(forum).get("title"));
+
+                JSONObject moderator = gremlinMapToHashMap(results.get(0)).get("moderator");
+                long moderatorId = Long.parseLong(getPropertyValue(gremlinMapToHashMap(moderator).get("id")));
+                String moderatorFirstName = getPropertyValue(gremlinMapToHashMap(moderator).get("firstName"));
+                String moderatorLastName = getPropertyValue(gremlinMapToHashMap(moderator).get("lastName"));
+
+                LdbcShortQuery6MessageForumResult queryResult = new LdbcShortQuery6MessageForumResult(
+                        forumId,
+                        forumTitle,
+                        moderatorId,
+                        moderatorFirstName,
+                        moderatorLastName
                 );
-        resultReporter.report(0, endResult, operation);
+                resultReporter.report(0, queryResult, operation);
+                break;
+            }
+        }
+
+
+
+
+
     }
 }
