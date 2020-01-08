@@ -1,7 +1,6 @@
 package com.jackwaudby.ldbcimplementations.utils;
 
 import com.jackwaudby.ldbcimplementations.CompleteLoader;
-import com.jackwaudby.ldbcimplementations.VertexLoader;
 import org.janusgraph.core.Cardinality;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.Multiplicity;
