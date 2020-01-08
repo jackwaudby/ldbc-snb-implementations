@@ -1,16 +1,16 @@
 package com.jackwaudby.ldbcimplementations.utils;
 
-import com.jackwaudby.ldbcimplementations.VertexLoader;
+import com.jackwaudby.ldbcimplementations.CompleteLoader;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
-import org.fusesource.jansi.internal.Kernel32;
 import org.janusgraph.core.JanusGraph;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -24,9 +24,7 @@ import static com.jackwaudby.ldbcimplementations.utils.TagClassFix.tagClassFix;
  */
 public class BulkLoadVertices {
 
-    static int COMMIT = 0;
-
-    public static void bulkLoadVertices(String pathToData, JanusGraph graph, GraphTraversalSource g) {
+    public static void bulkLoadVertices(String pathToData, JanusGraph graph, GraphTraversalSource g, HashMap<String, Object> ldbcIdToJanusGraphId) {
 
 
         List<String> integerProperties = new ArrayList<>();                     // properties that are Integer type
@@ -63,7 +61,7 @@ public class BulkLoadVertices {
                     vertexLabel = vertexLabel.substring(0, 1).toUpperCase() + vertexLabel.substring(1);
                     vertexLabel = tagClassFix(vertexLabel);                                 // tag class fix
 
-                    VertexLoader.LOGGER.info("Adding Vertex: (" + vertexLabel + ")");
+                    CompleteLoader.LOGGER.info("Adding Vertex: (" + vertexLabel + ")");
 
                     int elementsToAdd = lineCount(child); // number of elements to add
 
@@ -79,15 +77,15 @@ public class BulkLoadVertices {
                             int elementsExist = 0;
                             for (CSVRecord record : records) { // for each record in file
 
-                                List<Vertex> exists = g.V().has(vertexLabel, header.get(0),  // check if vertex exists
-                                        Long.parseLong(record.get(0))).fold().next();
+                                String compositeLdbcId = record.get(0) + vertexLabel;
+                                long ldbcId = Long.parseLong(record.get(0));
 
-                                if (exists.isEmpty()) { // if vertex does not exist in graph
-                                    Vertex v = g.addV(vertexLabel).property(header.get(0),
-                                            Long.parseLong(record.get(0))).next(); // add vertex to graph
+                                Vertex v = g.addV(vertexLabel).property(header.get(0),ldbcId).next(); // add vertex to graph
+
+                                ldbcIdToJanusGraphId.put(compositeLdbcId,v.id()); // add to id map
 
                                     elementsAdded = elementsAdded + 1; // increment elements added
-                                    //System.out.print("Progress: " + elementsAdded + "/" + elementsToAdd + "\r");
+
                                     for (int i = 1; i < header.size(); i++) { // add properties to vertex
                                         if (integerProperties.contains(header.get(i))) { // Integer
                                             g.V(v).property(header.get(i), Integer.parseInt(record.get(i))).next();
@@ -108,31 +106,19 @@ public class BulkLoadVertices {
                                             g.V(v).property(header.get(i), record.get(i)).next();
                                         }
                                     }
-
-                                    COMMIT = COMMIT + 1;
-
-                                    if (COMMIT == 1000) {
                                     graph.tx().commit(); // commit vertex
-                                        COMMIT = 0;
-//                                        System.out.println("COMMIT BATCH");
-                                    }
-                                } else { // vertex already exists
-                                    elementsExist = elementsExist + 1;
-                                }
                             }
-//                            graph.tx().commit();
-                            VertexLoader.LOGGER.info((elementsAdded + elementsExist) +"/" + elementsToAdd);
+                            CompleteLoader.LOGGER.info((elementsAdded + elementsExist) +"/" + elementsToAdd);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     } catch (IOException e) {
-                            VertexLoader.LOGGER.error(e);
+                        CompleteLoader.LOGGER.error(e);
                     }
-//                    graph.tx().commit(); // commit vertex
                 }
             }
         } else {
-            VertexLoader.LOGGER.error("Supplied path is not a directory");
+            CompleteLoader.LOGGER.error("Supplied path is not a directory");
         }
         graph.tx().commit();
     }
