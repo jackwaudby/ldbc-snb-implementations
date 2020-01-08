@@ -1,7 +1,7 @@
 package com.jackwaudby.ldbcimplementations.utils;
 
+import com.jackwaudby.ldbcimplementations.CompleteLoader;
 import com.jackwaudby.ldbcimplementations.VertexLoader;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.janusgraph.core.Cardinality;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.Multiplicity;
@@ -10,13 +10,13 @@ import org.janusgraph.core.schema.JanusGraphManagement;
 
 import java.util.Date;
 
-public class LoadSchemaIndexes {
+public class LoadSchema {
 
     /**
-     * Loads schema and indexes
+     * Loads schema
      * @param graph JanusGraph instance
      */
-    public static void loadSchemaIndexes (JanusGraph graph) {
+    public static void loadSchema(JanusGraph graph) {
 
         JanusGraphManagement mgmt = graph.openManagement(); // create management object
 
@@ -73,23 +73,12 @@ public class LoadSchemaIndexes {
             mgmt.makePropertyKey("classYear").dataType(Integer.class).cardinality(Cardinality.SINGLE).make();   // :studyAt
             mgmt.makePropertyKey("workFrom").dataType(Integer.class).cardinality(Cardinality.SINGLE).make();    // :workAt
 
-
-            // define graph indexes
-            mgmt.buildIndex("byPlaceId", Vertex.class).addKey(mgmt.getPropertyKey("id")).indexOnly(mgmt.getVertexLabel("Place")).unique().buildCompositeIndex();
-            mgmt.buildIndex("byCommentId", Vertex.class).addKey(mgmt.getPropertyKey("id")).indexOnly(mgmt.getVertexLabel("Comment")).unique().buildCompositeIndex();
-            mgmt.buildIndex("byOrganisationId", Vertex.class).addKey(mgmt.getPropertyKey("id")).indexOnly(mgmt.getVertexLabel("Organisation")).unique().buildCompositeIndex();
-            mgmt.buildIndex("byForumId", Vertex.class).addKey(mgmt.getPropertyKey("id")).indexOnly(mgmt.getVertexLabel("Forum")).unique().buildCompositeIndex();
-            mgmt.buildIndex("byPersonId", Vertex.class).addKey(mgmt.getPropertyKey("id")).indexOnly(mgmt.getVertexLabel("Person")).unique().buildCompositeIndex();
-            mgmt.buildIndex("byPostId", Vertex.class).addKey(mgmt.getPropertyKey("id")).indexOnly(mgmt.getVertexLabel("Post")).unique().buildCompositeIndex();
-            mgmt.buildIndex("byTagId", Vertex.class).addKey(mgmt.getPropertyKey("id")).indexOnly(mgmt.getVertexLabel("Tag")).unique().buildCompositeIndex();
-            mgmt.buildIndex("byTagClassId", Vertex.class).addKey(mgmt.getPropertyKey("id")).indexOnly(mgmt.getVertexLabel("TagClass")).unique().buildCompositeIndex();
-
             // commit schema
             mgmt.commit();
 
         } catch (
                 SchemaViolationException e) {
-            VertexLoader.LOGGER.error("Schema and Indexes may already be defined: " + e);
+                CompleteLoader.LOGGER.error("Schema may already be defined: " + e);
         }
     }
 }
