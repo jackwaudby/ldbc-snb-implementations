@@ -35,7 +35,7 @@ public class CompleteLoader {
 
         LOGGER.info("Opening JanusGraph connection");
         JanusGraph graph = JanusGraphFactory.open(janusGraphHome
-                + "/conf/janusgraph-berkeleyje.properties");                        // open connection to JanusGraph
+                + "/conf/janusgraph-berkeleyje-bulk.properties");                        // open connection to JanusGraph
 
         LOGGER.info("Creating Graph Traversal Source");
         GraphTraversalSource g = graph.traversal();                                 // create traversal source
