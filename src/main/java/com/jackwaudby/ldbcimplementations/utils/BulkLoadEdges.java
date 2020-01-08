@@ -1,6 +1,6 @@
 package com.jackwaudby.ldbcimplementations.utils;
 
-import com.jackwaudby.ldbcimplementations.VertexLoader;
+import com.jackwaudby.ldbcimplementations.CompleteLoader;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
@@ -13,6 +13,7 @@ import java.io.Reader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.jackwaudby.ldbcimplementations.utils.ExtractLabels.extractLabels;
@@ -20,28 +21,22 @@ import static com.jackwaudby.ldbcimplementations.utils.LineCount.lineCount;
 import static com.jackwaudby.ldbcimplementations.utils.TagClassFix.tagClassFix;
 
 /**
- * This script provides a method for loading edges.
+ * This script provides a method for bulk loading edges.
  */
 public class BulkLoadEdges {
 
-    static int COMMIT = 0;
-
-    public static void bulkLoadEdges(String pathToData, JanusGraph graph, GraphTraversalSource g) {
+    public static void bulkLoadEdges(String pathToData, JanusGraph graph, GraphTraversalSource g, HashMap<String, Object> ldbcIdToJanusGraphId) {
 
 
         List<String> integerProperties = new ArrayList<>();                                 // edge property types
         integerProperties.add("classYear");
         integerProperties.add("workFrom");
-//        List<String> dateTimeProperties = new ArrayList<>();
-//        dateTimeProperties.add("joinDate");
-//        dateTimeProperties.add("creationDate");
 
-
-        String validVertexFiles = "comment_0_0.csv,forum_0_0.csv,person_0_0.csv," +
-                "organisation_0_0.csv,place_0_0.csv," +
-                "post_0_0.csv,tag_0_0.csv,tagclass_0_0.csv";                                // vertex files
+        String validVertexFiles = "comment_0_0.csv,forum_0_0.csv,person_0_0.csv," +         // vertex files
+                "organisation_0_0.csv,place_0_0.csv," +                                     // used to distinguish
+                "post_0_0.csv,tag_0_0.csv,tagclass_0_0.csv";                                // edges files
         String[] vertexFileNames = validVertexFiles.split(",");
-        List<String> vertexFilePaths = new ArrayList<>();                                   // valid vertex file paths
+        List<String> vertexFilePaths = new ArrayList<>();                                   // vertex file paths
         for (int i = 0; i < vertexFileNames.length; i++) {
             vertexFilePaths.add(i, pathToData + vertexFileNames[i]);
         }
@@ -53,8 +48,9 @@ public class BulkLoadEdges {
                 if (!(file.toString().contains(".crc") ||                           // ignore .crc files
                         file.toString().contains("update") ||                       // ignore update files
                         file.toString().contains(".DS_Store")) &&                   // ignore DS
-                        (!vertexFilePaths.contains(file.toString()))) {             // valid vertex path
-                    String[] cleanFileName = extractLabels(file.toString(), pathToData);
+                        (!vertexFilePaths.contains(file.toString()))) {             // not a vertex file
+
+                    String[] cleanFileName = extractLabels(file.toString(), pathToData);        // get edge labels
                     String edgeTail = cleanFileName[0];                                         // edge tail vertex
                     edgeTail = edgeTail.substring(0, 1).toUpperCase() + edgeTail.substring(1);  // capitalise
                     String edgeHead = cleanFileName[2];                                         // edge head vertex
@@ -62,9 +58,12 @@ public class BulkLoadEdges {
                     String edgeLabel = cleanFileName[1];                                        // edge label
                     edgeTail = tagClassFix(edgeTail);                                           // check for tag class fix
                     edgeHead = tagClassFix(edgeHead);                                           // check for tag class fix
-                    VertexLoader.LOGGER.info("Adding Edge: " + "(" + edgeTail + ")-" +
+
+                    CompleteLoader.LOGGER.info("Adding Edge: " + "(" + edgeTail + ")-" +
                             "[:" + edgeLabel + "]->(" + edgeHead + ")");
+
                     int elementsToAdd = lineCount(file);                                        // elements to add
+
                     Reader in;                                                                  // read file in
                     try {
                         in = new FileReader(file);                                              // file
@@ -72,60 +71,70 @@ public class BulkLoadEdges {
                         try {
                             records = CSVFormat.DEFAULT.withDelimiter('|').parse(in);           // get records
                             CSVRecord header = records.iterator().next();                       // get record header
+
                             ArrayList<String> edgeInfo = new ArrayList<>();
                             for (int i = 0; i < header.size(); i++) {                           // edge information
                                 edgeInfo.add(header.get(i));
                             }
 
                             int elementsAdded = 0;
+                            String startId;
+                            String endId;
                             if (edgeInfo.size() == 3) {                                         // if edge has property
+
                                 String edgePropertyKey = edgeInfo.get(2);
+
                                 for (CSVRecord record : records) {
+
                                     elementsAdded = elementsAdded + 1;                          // increment elements added
-                                    if (integerProperties.contains(edgePropertyKey)){           // edge property is int
+                                    startId = record.get(0) + edgeTail;                  // keys to look up internal id
+                                    endId = record.get(1) + edgeHead;
+
+                                    if (integerProperties.contains(edgePropertyKey)) {           // edge property is int
+
                                         long edgePropertyValue = Long.parseLong(record.get(2));
-                                        g.V().has(edgeHead, "id", Long.parseLong(record.get(1)))
-                                                .as("a")
-                                                .V().has(edgeTail, "id", Long.parseLong(record.get(0)))
+
+                                        g.V().hasId(ldbcIdToJanusGraphId.get(endId)).as("a")
+                                                .V().hasId(ldbcIdToJanusGraphId.get(startId))
                                                 .addE(edgeLabel)
-                                                .property(edgePropertyKey,edgePropertyValue)
+                                                .property(edgePropertyKey, edgePropertyValue)
                                                 .to("a")
-                                                .next(); // add edge
+                                                .next();
+
                                     } else {                                                    // edge property is date
+
                                         SimpleDateFormat dateTimeFormat =
                                                 new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
                                         Date edgePropertyValue = dateTimeFormat.parse(record.get(2));
-                                        g.V().has(edgeHead, "id", Long.parseLong(record.get(1)))
-                                                .as("a")
-                                                .V().has(edgeTail, "id", Long.parseLong(record.get(0)))
+
+                                        g.V().hasId(ldbcIdToJanusGraphId.get(endId)).as("a")
+                                                .V().hasId(ldbcIdToJanusGraphId.get(startId))
                                                 .addE(edgeLabel)
-                                                .property(edgePropertyKey,edgePropertyValue.getTime())
+                                                .property(edgePropertyKey, edgePropertyValue.getTime())
                                                 .to("a")
-                                                .next();                                            // add edge
+                                                .next();
+
                                     }
                                 }
                             } else {
-                                    for (CSVRecord record : records) {
-                                        elementsAdded = elementsAdded + 1;
-                                        g.V().has(edgeHead, "id", Long.parseLong(record.get(1)))
-                                                .as("a")
-                                                .V().has(edgeTail, "id", Long.parseLong(record.get(0)))
-                                                .addE(edgeLabel)
-                                                .to("a")
-                                                .next();
-                                    }
+                                for (CSVRecord record : records) {
+                                    elementsAdded = elementsAdded + 1;
+
+                                    startId = record.get(0) + edgeTail;
+                                    endId = record.get(1) + edgeHead;
+
+                                    g.V().hasId(ldbcIdToJanusGraphId.get(endId)).as("a")
+                                            .V().hasId(ldbcIdToJanusGraphId.get(startId))
+                                            .addE(edgeLabel)
+                                            .to("a")
+                                            .next();
+
+                                }
                             }
 
-                            COMMIT = COMMIT + 1;
+                            graph.tx().commit();
 
-                            if (COMMIT == 1000) {
-                                graph.tx().commit(); // commit vertex
-                                COMMIT = 0;
-//                                        System.out.println("COMMIT BATCH");
-                            }
-//                            graph.tx().commit();                                                // commit edges
-
-                            VertexLoader.LOGGER.info(elementsAdded + "/" + elementsToAdd);
+                            CompleteLoader.LOGGER.info(elementsAdded + "/" + elementsToAdd);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
