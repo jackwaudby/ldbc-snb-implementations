@@ -1,6 +1,6 @@
 package com.jackwaudby.ldbcimplementations.utils;
 
-import com.jackwaudby.ldbcimplementations.VertexLoader;
+import com.jackwaudby.ldbcimplementations.CompleteLoader;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.SchemaViolationException;
@@ -32,7 +32,7 @@ public class LoadIndexes {
 
         } catch (
                 SchemaViolationException e) {
-            VertexLoader.LOGGER.error("Indexes may already be defined: " + e);
+            CompleteLoader.LOGGER.error("Indexes may already be defined: " + e);
         }
     }
 }
