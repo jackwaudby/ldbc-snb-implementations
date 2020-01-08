@@ -13,6 +13,7 @@ import static com.jackwaudby.ldbcimplementations.utils.BulkLoadVertices.bulkLoad
 import static com.jackwaudby.ldbcimplementations.utils.CloseGraph.closeGraph;
 import static com.jackwaudby.ldbcimplementations.utils.LoadIndexes.loadIndexes;
 import static com.jackwaudby.ldbcimplementations.utils.LoadSchema.loadSchema;
+import static com.jackwaudby.ldbcimplementations.utils.Reindex.reindex;
 
 /**
  * This script creates embedded connection with JanusGraph and loads schema, indexes and data.
@@ -39,7 +40,16 @@ public class CompleteLoader {
 
         LOGGER.info("Creating Graph Traversal Source");
         GraphTraversalSource g = graph.traversal();                                 // create traversal source
+
+        LOGGER.info("Loading Schema");
         loadSchema(graph);
+
+        LOGGER.info("Loading Index");
+        loadIndexes(graph);
+
+        JanusGraphManagement schema = graph.openManagement();
+        LOGGER.info("Schema: \n" + schema.printSchema());
+        schema.commit();
 
         LOGGER.info("Loading Vertices");
         bulkLoadVertices(pathToData,graph,g,ldbcIdToJanusGraphId);
@@ -47,15 +57,11 @@ public class CompleteLoader {
         LOGGER.info("Loading Edges");
         bulkLoadEdges(pathToData,graph,g,ldbcIdToJanusGraphId);
 
-        LOGGER.info("Loading Index");
-        loadIndexes(graph);
+        LOGGER.info("Reindex");
+        reindex(graph);
 
         LOGGER.info("Closing Graph Traversal Source");
         closeGraph(g);
-
-        JanusGraphManagement schema = graph.openManagement();
-        LOGGER.info("Schema: \n" + schema.printSchema());
-        schema.commit();
 
         LOGGER.info("Closing JanusGraph connection");
         graph.close();

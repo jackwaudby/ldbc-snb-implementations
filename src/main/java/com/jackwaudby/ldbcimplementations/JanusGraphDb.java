@@ -25,10 +25,11 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import static com.jackwaudby.ldbcimplementations.utils.ImplementationConfiguration.getUrl;
+
+
 
 public class JanusGraphDb extends Db {
-
-    public static int TX_RETRIES = 5;           // transaction retries
 
     /**
      * Static nested class that creates a JanusGraph client
@@ -173,7 +174,7 @@ public class JanusGraphDb extends Db {
         registerOperationHandler(LdbcQuery13.class,LdbcQuery13Handler.class);
         registerOperationHandler(LdbcQuery14.class,LdbcQuery14Handler.class);
 
-//
+
         registerOperationHandler(LdbcShortQuery1PersonProfile.class, LdbcShortQuery1PersonProfileHandler.class);
         registerOperationHandler(LdbcShortQuery2PersonPosts.class,LdbcShortQuery2PersonPostsHandler.class);
         registerOperationHandler(LdbcShortQuery3PersonFriends.class,LdbcShortQuery3PersonFriendsHandler.class);
@@ -181,7 +182,7 @@ public class JanusGraphDb extends Db {
         registerOperationHandler(LdbcShortQuery5MessageCreator.class, LdbcShortQuery5MessageCreatorHandler.class);
         registerOperationHandler(LdbcShortQuery6MessageForum.class,LdbcShortQuery6MessageForumHandler.class);
         registerOperationHandler(LdbcShortQuery7MessageReplies.class,LdbcShortQuery7MessageRepliesHandler.class);
-//
+
         registerOperationHandler(LdbcUpdate1AddPerson.class, LdbcUpdate1AddPersonHandler.class);
         registerOperationHandler(LdbcUpdate2AddPostLike.class, LdbcUpdate2AddPostLikeHandler.class);
         registerOperationHandler(LdbcUpdate3AddCommentLike.class, LdbcUpdate3AddCommentLikeHandler.class);
@@ -197,7 +198,7 @@ public class JanusGraphDb extends Db {
      * Called after benchmark has completed.
      */
     @Override
-    protected void onClose() {
+    public void onClose() {
         connectionState.janusGraphClient.closeClient(); // perform clean up
     }
 
@@ -207,9 +208,9 @@ public class JanusGraphDb extends Db {
     }
 
     // method not required by driver used for testing
-    void init(Map<String, String> properties) {
+    public void init() {
 
-        String connectionUrl = properties.get("url"); // retrieve connection url
+        String connectionUrl = getUrl();                                // retrieve connection url
         connectionState = new JanusGraphConnectionState(connectionUrl); // create JanusGraph connection state
     }
 
