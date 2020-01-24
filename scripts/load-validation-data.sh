@@ -2,9 +2,13 @@
 
 echo "loading validation data in DATAGEN directory"
 
+# restruct directory if needed
+#mv ${LDBC_SNB_DATAGEN_HOME}/social_network/dynamic/*.csv ${LDBC_SNB_DATAGEN_HOME}/social_network/
+#mv ${LDBC_SNB_DATAGEN_HOME}/social_network/static/*.csv ${LDBC_SNB_DATAGEN_HOME}/social_network/
+
 # delete any existing data from datagen
-rm -Rf ~/Documents/ldbc/ldbc_snb_datagen/social_network ~/Documents/ldbc/ldbc_snb_datagen/substitution_parameters
+rm -Rf ${LDBC_SNB_DATAGEN_HOME}/social_network ${LDBC_SNB_DATAGEN_HOME}/substitution_parameters
 
 # copy data from validation to datagen
-cp -a ~/Documents/janusgraph/validation/set_02/social_network ~/Documents/ldbc/ldbc_snb_datagen/social_network
-cp -a ~/Documents/janusgraph/validation/set_02/substitution_parameters ~/Documents/ldbc/ldbc_snb_datagen/substitution_parameters
+cp -a ../validation/SF01/social_network ${LDBC_SNB_DATAGEN_HOME}/social_network
+cp -a ../validation/SF01/substitution_parameters ${LDBC_SNB_DATAGEN_HOME}/substitution_parameters/
