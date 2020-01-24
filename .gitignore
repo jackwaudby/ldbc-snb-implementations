@@ -10,3 +10,7 @@ src/main/java/com.jackwaudby.ldbcimplementations/clients/*
 **log**
 QueryTestBed.java
 **Runnable.java
+.java-version
+LDBC-SNB-results.json
+LDBC-SNB-configuration.properties
+LDBC-SNB-results_log.csv
