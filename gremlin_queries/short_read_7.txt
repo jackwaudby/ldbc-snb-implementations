@@ -1,0 +1,33 @@
+parameters:
+message.id=343597407237
+
+query:
+
+originalMessage=g.V().has('Post','id',343597407237).fold().coalesce(unfold(),V().has('Comment','id',343597407237)).next()
+originalAuthor=g.V(originalMessage).out('hasCreator').next()
+g.V(originalMessage).as('originalMessage').in('replyOf').as('comment').
+order().by(select('comment').by('creationDate'),desc).by(select('comment').by('id'),asc).
+out('hasCreator').as('replyAuthor').
+choose(bothE('knows').otherV().hasId(originalAuthor.id()),constant(true),constant(false)).as('knows').
+select('comment','replyAuthor','knows').
+by(valueMap('id','content','creationDate')).by(valueMap('id','firstName','lastName')).by(fold()).
+map{it -> [
+commentId:it.get().get('comment').get('id'),
+commentContent:it.get().get('comment').get('content'),
+commentCreationDate:it.get().get('comment').get('creationDate'),
+replyAuthorId:it.get().get('replyAuthor').get('id'),
+replyAuthorFirstName:it.get().get('replyAuthor').get('firstName'),
+replyAuthorLastName:it.get().get('replyAuthor').get('lastName'),
+replyAuthorKnowsOriginalMessageAuthor:it.get().get('knows')
+] }
+
+
+result:
+[343597407239,"duh",1290039922036,8796093023042,"Abdul Haris","Balawan",false]
+[343597407238,"good",1290024895988,4398046513292,"Daria","Berman",false]
+[343597407240,"About Charles Lindbergh, on dubbed the Crime of the Century. This eventually led to the ",1290023612648,6597069769141,"Francisco","Sumac",true]
+[343597407245,"no",1289997097299,6597069766794,"Juan","Aquino",true]
+[343597407241,"LOL",1289995528817,602,"Dale","Garcia",false]
+[343597407247,"About GHV2, by Warner Bros. Records. It contains the most popular songs from the 1990s u",1289992626886,6597069768062,"Francis","Santos",false]
+[343597407250,"I see",1289991653235,6597069769640,"Bing","Zhang",false]
+[343597407242,"LOL",1289978524188,4398046512217,"Jesus","Mendez",false]]

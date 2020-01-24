@@ -1,0 +1,24 @@
+Parameters:
+person.id=10995116279162
+
+clock (100) {
+g.V().has('Person','id',10995116279162).bothE('knows').as('friendshipCreationDate').otherV().as('friend').
+order().by(select('friendshipCreationDate').by('creationDate'),desc).by('id',asc).
+select('friendshipCreationDate','friend').by(valueMap('creationDate')).by(valueMap('id','firstName','lastName'))
+}
+
+time: 0.1792ms
+
+Results:
+[8796093024170,"Angus","Wang",1290692159107],
+[10995116278855,"Alfred","Hoffmann",1290599797213],
+[6597069768697,"Leo","González",1290384494442],
+[978,"Pol","Dara",1290288806006],
+[10995116278654,"Maria","Onopka",1289957238647],
+[6597069767520,"Vladimir","Foxx",1289646093702],
+[6597069768280,"Michal","Kaminski",1289586057801],
+[2746,"Shweta","Sharma",1289558052787],
+[8796093022580,"Grigore","Bologan",1289387421455],
+[2199023257680,"Abdoulaye Khouma","Sall",1289364896950],
+[4398046511642,"Dovid","Linchuk",1289361827237],
+[6597069769209,"Antonio","Gatchalian",1289309669842]

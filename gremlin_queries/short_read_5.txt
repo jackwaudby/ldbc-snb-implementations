@@ -1,0 +1,10 @@
+parameters:
+message.id=137438968838
+
+query:
+g.V().has('Comment','id',137438968838).fold().coalesce(unfold(),V().has('Post','id',137438968838)).
+                out('hasCreator').valueMap('id','firstName','lastName')
+result:
+2199023256559
+"John"
+"Murphy"

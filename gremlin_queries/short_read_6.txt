@@ -1,0 +1,12 @@
+parameters:
+message.id=343597518345
+
+g.V().has('Post','id',343597518345).fold().
+coalesce(unfold(),V().has('Comment','id',343597518345).
+repeat(out('replyOf').simplePath()).until(hasLabel('Post'))).
+in('containerOf').as('forum').out('hasModerator').as('moderator').
+select('forum','moderator').by(valueMap('id','title')).by(valueMap('id','firstName','lastName'))
+
+results:
+137438960344,"Wall of Ben Chen",4398046513562,"Ben","Chen"
+

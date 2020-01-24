@@ -1,0 +1,9 @@
+parameters:
+message.id=343597506709
+
+g.V().has('Comment','id', 343597547153).fold().
+  coalesce(unfold(),V().has('Post','id',343597506709)).
+    valueMap('creationDate','content','imageFile').next()
+
+result:
+["About Adolf Hitler, dolf Hitler's political views. His writings and methods About Sergei Prokofiev, achieving n",1290690354212]

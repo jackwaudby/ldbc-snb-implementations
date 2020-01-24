@@ -1,0 +1,27 @@
+Parameters:
+person.id=8796093024857
+limit=10
+
+g.V().has('Person','id',8796093024857).in('hasCreator').
+  order().
+    by('creationDate',decr).
+    by('id',decr).limit(10).as('message').
+    local(choose(
+      hasLabel('Post'),
+      identity().as('originalPost').out('hasCreator').as('originalAuthor'),
+      repeat(out('replyOf').simplePath()).until(hasLabel('Post')).as('originalPost').out('hasCreator').as('originalAuthor'))).
+        select('message','originalPost','originalAuthor').
+          by(valueMap('id','imageFile','content','creationDate')).
+          by(valueMap('id')).
+          by(valueMap('id','firstName','lastName'))
+
+Result:
+[343597518335,"About Eagles Live, ill Szymczyk put it, the record's perfect three-part harmonies were fix",1290631851485,343597518329,4398046513562,"Ben","Chen"],
+[343597471068,"About Augustine of Hippo, 28, 430), also known as Augustine, St. Augustine, St. Austin, St. Augoustinos, Blessed AAbout Gerald Ford, Nixon's resignation on August 9, 1974, he",1290560422532,343597471068,8796093024857,"Hao","Chen"],
+[343597567932,"no",1290396007347,343597567913,6597069769209,"Antonio","Gatchalian"],[343597471049,"About Augustine of Hippo, Christianity. According to his contemporary, JerAbout Aristotle, an p",1290218174308,343597471049,8796093024857,"Hao","Chen"],
+[343597485901,"About Cicero, nd successful lawyer, Cicero believed About Duke Ellington, nd category. These included many of thA",1289986228458,343597485893,4398046511983,"Yang","Chen"],
+[343597408647,"About Classical Athens, ue to the impact of its cultural and political achievements dur",1289920800910,343597408643,1633,"Daria","Ivanov"],
+[343597465823,"duh",1289495693318,343597465820,1161,"Li","Zhang"],
+[343597465989,"About We Can Work It Out, happened only rarely after tAbout French Equatorial Afri",1289198503756,343597465976,1161,"Li","Zhang"],
+[343597466166,"About Luís Figo, mber that makes him the most capped PortugueseAbout Take Me to the River,",1289138550604,343597466160,1161,"Li","Zhang"],
+[343597465876,"About Francis of Assisi, s endorsed by Pope IAbout Isaac Asimov, on guides for ",1289124111107,343597465873,1161,"Li","Zhang"]
