@@ -1,6 +1,6 @@
 # LDBC SNB Implementation for JanusGraph
 
-This implementation assumes JanusGraph is backend by BerkeleyDB.
+This implementation assumes JanusGraph is backed by BerkeleyDB.
 
 ```
 # set this to the janusgraph repo
