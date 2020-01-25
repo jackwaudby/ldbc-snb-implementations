@@ -53,7 +53,7 @@ public class LdbcShortQuery6MessageForumHandler implements OperationHandler<Ldbc
         int TX_RETRIES = getTxnAttempts();
 
         while (TX_ATTEMPTS < TX_RETRIES) {
-            LOGGER.info("Attempt " + (TX_ATTEMPTS + 1) + ": " + QueryTestBed.class.getSimpleName());
+            LOGGER.info("Attempt " + (TX_ATTEMPTS + 1) + ": " + LdbcShortQuery6MessageForumHandler.class.getSimpleName());
             String response = client.execute(queryString);                                            // execute query
             ArrayList<JSONObject> results = gremlinResponseToResultArrayList(response);          // get result list
             if (gremlinMapToHashMap(results.get(0)).containsKey("error")) {
@@ -77,6 +77,10 @@ public class LdbcShortQuery6MessageForumHandler implements OperationHandler<Ldbc
                         moderatorFirstName,
                         moderatorLastName
                 );
+
+//                LOGGER.info(queryResult.toString());
+
+
                 resultReporter.report(0, queryResult, operation);
                 break;
             }

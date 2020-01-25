@@ -5,6 +5,7 @@ import com.jackwaudby.ldbcimplementations.QueryTestBed;
 import com.ldbc.driver.DbException;
 import com.ldbc.driver.OperationHandler;
 import com.ldbc.driver.ResultReporter;
+import com.ldbc.driver.workloads.ldbc.snb.interactive.LdbcNoResult;
 import com.ldbc.driver.workloads.ldbc.snb.interactive.LdbcShortQuery7MessageReplies;
 import com.ldbc.driver.workloads.ldbc.snb.interactive.LdbcShortQuery7MessageRepliesResult;
 import org.apache.log4j.Logger;
@@ -64,14 +65,35 @@ public class LdbcShortQuery7MessageRepliesHandler implements OperationHandler<Ld
         int TX_RETRIES = getTxnAttempts();
 
         while (TX_ATTEMPTS < TX_RETRIES) {
-            LOGGER.info("Attempt " + (TX_ATTEMPTS + 1) + ": " + QueryTestBed.class.getSimpleName());
+            LOGGER.info("Attempt " + (TX_ATTEMPTS + 1) + ": " + LdbcShortQuery7MessageRepliesHandler.class.getSimpleName());
             String response = client.execute(queryString);                                            // execute query
             ArrayList<JSONObject> results = gremlinResponseToResultArrayList(response);          // get result list
             if (gremlinMapToHashMap(results.get(0)).containsKey("error")) {
                 LOGGER.error(getPropertyValue(gremlinMapToHashMap(results.get(0)).get("error")));
                 TX_ATTEMPTS = TX_ATTEMPTS + 1;
-            } else {
+            } else if (true) {
                 ArrayList<LdbcShortQuery7MessageRepliesResult> queryResults                   // init result list
+                    = new ArrayList<>();
+                LOGGER.info("B");
+
+                LdbcShortQuery7MessageRepliesResult queryResult                                    // create result object
+                        = new LdbcShortQuery7MessageRepliesResult(
+                        11111,
+                        "skd",
+                        112323,
+                        2222,
+                        "replyAuthorFirstName",
+                        "replyAuthorLastName",
+                        true
+                );
+                queryResults.add(queryResult);
+
+            }
+            else
+                {
+                    LOGGER.info("C");
+
+                    ArrayList<LdbcShortQuery7MessageRepliesResult> queryResults                   // init result list
                         = new ArrayList<>();
                 for (JSONObject result: results
                 ) {
@@ -94,7 +116,12 @@ public class LdbcShortQuery7MessageRepliesHandler implements OperationHandler<Ld
                     );
                     queryResults.add(queryResult);
                 }
+
+                LOGGER.info("Number of results: " + queryResults.size());
+
                 resultReporter.report(0, queryResults, operation);
+
+
 
                 break;
             }
