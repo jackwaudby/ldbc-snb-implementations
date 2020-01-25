@@ -26,7 +26,7 @@ Navigate to the `scripts` directory.
 ./run-validation.sh
 ```
 
-## JanusGraph Console##
+## JanusGraph Console ##
 
 Used for testing:
 ```
